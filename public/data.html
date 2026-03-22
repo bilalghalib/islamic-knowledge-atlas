@@ -34,7 +34,7 @@ footer{margin-top:3rem;padding:1rem 0;border-top:1px solid var(--b);font-size:.8
 <a href="index.html">Atlas</a>
 <a href="context.html">Context</a>
 <a href="data.html" class="active">Data & Downloads</a>
-<a href="research.html">For Researchers</a>
+<a href="research.html">Essay Guide</a>
 </nav>
 
 <h1>Data & Downloads</h1>
@@ -119,6 +119,78 @@ footer{margin-top:3rem;padding:1rem 0;border-top:1px solid var(--b);font-size:.8
 <li>Confidence scores are the AI's self-assessment, not independently validated</li>
 <li>The 21.4% of records that couldn't be matched during recovery may have slightly different characteristics than the matched records</li>
 </ul>
+
+<h2>Women Scholars: Primary Source Extractions</h2>
+
+<p>Western library catalogues (VIAF) contain fewer than 40 Islamicate women scholars across all pre-1500 centuries. We went to the primary sources — Arabic biographical dictionaries digitised by the <a href="https://openiti.org">OpenITI</a> project — and extracted women's entries directly, preserving the verbatim Arabic text.</p>
+
+<div class="card">
+<h3>Combined Dataset: 1,689 Women Scholars (600s-1400s CE)</h3>
+<p>Three primary sources, each covering different centuries. Every row includes: source book, author, century covered, full Arabic name, places, roles, word count, and the complete verbatim Arabic biographical text.</p>
+<a class="dl" href="data/islamicate_women_scholars.csv" download>islamicate_women_scholars.csv (1 MB)</a>
+</div>
+
+<table>
+<tr><th>Source</th><th>Author</th><th>Died</th><th>Covers</th><th>Women</th><th>Download</th></tr>
+<tr>
+<td><em>Siyar A'lam al-Nubala'</em><br><small>سير أعلام النبلاء</small></td>
+<td>al-Dhahabi<br><small>الذهبي</small></td>
+<td>1348 CE</td>
+<td>600s-1300s CE</td>
+<td>105</td>
+<td><a class="dl" href="data/dhahabi_women.json" download>JSON</a></td>
+</tr>
+<tr>
+<td><em>al-Durar al-Kamina</em><br><small>الدرر الكامنة في أعيان المئة الثامنة</small></td>
+<td>Ibn Hajar al-'Asqalani<br><small>ابن حجر العسقلاني</small></td>
+<td>1449 CE</td>
+<td>1300s CE</td>
+<td>54</td>
+<td><a class="dl" href="data/ibn_hajar_women.json" download>JSON</a></td>
+</tr>
+<tr>
+<td><em>al-Daw al-Lami'</em><br><small>الضوء اللامع لأهل القرن التاسع</small></td>
+<td>al-Sakhawi<br><small>السخاوي</small></td>
+<td>1497 CE</td>
+<td>1400s CE</td>
+<td>1,530</td>
+<td><a class="dl" href="data/sakhawi_women.csv" download>CSV</a> <a class="dl" href="data/sakhawi_all_women.json" download>JSON</a></td>
+</tr>
+</table>
+
+<p style="font-size:.85rem;color:var(--m);margin-top:.5rem">All texts from the <a href="https://github.com/OpenITI">OpenITI corpus</a> (open access). Extraction by regex pattern matching on Arabic biographical markers (بنت، أم، ست، زوجة). 25 entries fully translated with structured English fields. Remaining entries have Arabic text preserved for future translation.</p>
+
+<div class="card">
+<h3>Key Findings</h3>
+<ul style="margin:.5rem 0 0 1.5rem">
+<li><strong>Aisha al-Maqdisiyya</strong> (d. ~1350s CE) — titled <em>Musnada al-Dunya</em> ("the world's highest hadith authority"). A woman held the highest certification in hadith transmission on earth.</li>
+<li><strong>Hajar bint Muhammad</strong> (b. 1388 CE) — became "the highest isnad authority of her era." Scholars crowded to study with her.</li>
+<li><strong>268 women received ijaza</strong> (certification to transmit knowledge) in al-Sakhawi's 15th-century dictionary alone.</li>
+<li><strong>VIAF captures 3</strong> Islamicate women from the same century. Al-Sakhawi documented 1,530. The Western catalogue sees 0.2% of what the primary sources contain.</li>
+</ul>
+</div>
+
+<h2>Structured Translation Samples</h2>
+
+<div class="card">
+<h3>25 Fully Translated Entries (Arabic + English)</h3>
+<p>The richest women's entries from al-Sakhawi, with structured fields: name (Arabic + English), birth/death dates, places, madhhab, roles, teachers, texts transmitted, family connections, and English summary.</p>
+<a class="dl" href="data/sakhawi_women_structured.json" download>sakhawi_women_structured.json</a>
+</div>
+
+<h2>Provenance &amp; Verifiability</h2>
+
+<div class="card">
+<h3>How to verify any claim on this site</h3>
+<ul style="margin:.5rem 0 0 1.5rem">
+<li><strong>VIAF data:</strong> Download from <a href="https://viaf.org/viaf/data/">viaf.org/viaf/data</a>. Our extraction script is on GitHub.</li>
+<li><strong>Sonnet classifications:</strong> Each scholar has title_evidence (from library catalogues) and background_knowledge (from AI, with Wikipedia links). Download the SQLite database and check any entry.</li>
+<li><strong>Women scholars:</strong> Every entry includes verbatim Arabic text from OpenITI. Cross-reference against <a href="https://github.com/OpenITI/RELEASE">github.com/OpenITI/RELEASE</a>.</li>
+<li><strong>Chaney's paper:</strong> Available as a working paper from his Harvard faculty page. Our page references specific pages (pp. 3, 6, 16, 18-19).</li>
+<li><strong>El-Rouayheb, Saliba, Hirschler, Dallal:</strong> Published works cited with full references on the <a href="context.html">Context page</a>.</li>
+</ul>
+<p style="font-size:.85rem;color:var(--m);margin-top:.5rem">If you find an error, please report it on <a href="https://github.com/bilalghalib/islamic-knowledge-atlas/issues">GitHub Issues</a>.</p>
+</div>
 
 <h2>Source Code</h2>
 
