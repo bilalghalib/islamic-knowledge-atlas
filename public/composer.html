@@ -208,7 +208,22 @@ body{font-family:Georgia,serif;background:var(--bg);color:var(--fg);font-size:15
 
 <script>
 // ─── Config ───
-const BR = 'https://base.wayway.ai/api';
+// Use Vercel proxy to avoid CORS, fall back to direct if running locally
+const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+const BR_DIRECT = 'https://base.wayway.ai/api';
+const BR_PROXY = '/api/baserow';
+
+function brURL(path, params = {}) {
+  if (IS_LOCAL) {
+    const url = new URL(BR_DIRECT + path);
+    for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
+    return url.toString();
+  }
+  const url = new URL(BR_PROXY, location.origin);
+  url.searchParams.set('path', path);
+  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
+  return url.toString();
+}
 const T = { blocks: 771, compositions: 770, insights: 764 };
 const F = {
   name:7243, notes:7244, pos:7251, section:7252, content:7253,
@@ -242,7 +257,7 @@ async function doLogin() {
   const email = document.getElementById('loginEmail').value;
   const pass = document.getElementById('loginPass').value;
   try {
-    const r = await fetch(`${BR}/user/token-auth/`, {
+    const r = await fetch(brURL('/user/token-auth/'), {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({email, password: pass})
     });
@@ -273,10 +288,10 @@ function setStatus(s) {
 }
 
 // ─── API ───
-async function api(method, path, body) {
+async function api(method, path, body, extraParams = {}) {
   const opts = { method, headers: { 'Authorization': `JWT ${token}`, 'Content-Type': 'application/json' } };
   if (body) opts.body = JSON.stringify(body);
-  const r = await fetch(`${BR}${path}`, opts);
+  const r = await fetch(brURL(path, extraParams), opts);
   if (r.status === 401) { token = null; localStorage.removeItem('br_token'); online = false; setStatus('expired'); return null; }
   if (!r.ok) throw new Error(`API ${r.status}`);
   if (r.status === 204) return null;
@@ -302,7 +317,11 @@ function parseRow(row) {
 async function loadBlocks() {
   try {
     // Load all blocks linked to composition 3, ordered by position
-    const d = await api('GET', `/database/rows/table/${T.blocks}/?size=200&order_by=field_${F.pos}&filter__field_${F.comp}__link_row_has=3`);
+    const d = await api('GET', `/database/rows/table/${T.blocks}/`, null, {
+      size: '200',
+      order_by: `field_${F.pos}`,
+      [`filter__field_${F.comp}__link_row_has`]: '3'
+    });
     if (!d) return;
     blocks = d.results.map(parseRow).filter(b => b.text); // skip empties
     cacheBlocks();
@@ -740,7 +759,7 @@ async function init() {
   if (token) {
     try {
       // Test token validity
-      const r = await fetch(`${BR}/user/dashboard/`, { headers: { 'Authorization': `JWT ${token}` } });
+      const r = await fetch(brURL('/user/dashboard/'), { headers: { 'Authorization': `JWT ${token}` } });
       if (r.ok) {
         online = true;
         document.getElementById('loginOverlay').classList.add('hidden');
