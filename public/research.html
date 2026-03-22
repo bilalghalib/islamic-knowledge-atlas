@@ -28,6 +28,7 @@ li{margin:.3rem 0}
 .insight{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:1rem;margin:1rem 0;font-size:.9rem}
 footer{margin-top:3rem;padding:1rem 0;border-top:1px solid var(--b);font-size:.8rem;color:var(--m);text-align:center}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
 </head>
 <body>
 <div class="c">
@@ -81,6 +82,21 @@ function showOption(n) {
 <div class="insight">
 <strong>Potential argument:</strong> The modern transformation of subjectivity didn't just change how we understand the person — it changed what we count as knowledge about persons. The Chaney data demonstrates this at civilisational scale: a tradition that invested in the sciences of the soul (tasawwuf, kalam, fiqh) appears to be "declining" when measured by a framework that only counts material sciences.
 </div>
+
+<div style="margin:1rem 0">
+<h3 style="font-size:.95rem;color:var(--a)">Relevant Charts</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+<div style="background:#fff;border:1px solid var(--b);border-radius:6px;padding:.8rem">
+<canvas id="c1_domain" height="180"></canvas>
+<p style="font-size:.72rem;color:var(--m);margin-top:.3rem"><strong>Domain River:</strong> Tasawwuf grew 7.2x. <a href="index.html#domain-river">See full chart →</a></p>
+</div>
+<div style="background:#fff;border:1px solid var(--b);border-radius:6px;padding:.8rem">
+<canvas id="c1_commentary" height="180"></canvas>
+<p style="font-size:.72rem;color:var(--m);margin-top:.3rem"><strong>Commentary:</strong> Stable at ~11%, not stagnation. <a href="index.html#commentary">See full chart →</a></p>
+</div>
+</div>
+<p style="font-size:.78rem;margin-top:.5rem"><strong>Also useful:</strong> <a href="index.html#scholars">Scholar Explorer</a> (filter for polymaths) · <a href="data.html">Women scholars dataset</a> (1,689 entries)</p>
+</div>
 </div>
 
 </div>
@@ -98,6 +114,21 @@ function showOption(n) {
 
 <div class="insight">
 <strong>Potential argument:</strong> Modern psychology's conceptualisation of religion reproduces the same classification error visible in the Chaney data. Just as the science/religion binary erases polymaths who worked across domains, the psychology/spirituality binary reduces rich traditions of soul-formation (tasawwuf, tazkiya) to "religious coping mechanisms." What Freud's "disciplinary inversion" does to revelation (placing it under psychology's jurisdiction), Chaney's framework does to the Islamic sciences (placing them under the science/religion binary).
+</div>
+
+<div style="margin:1rem 0">
+<h3 style="font-size:.95rem;color:var(--a)">Relevant Charts</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+<div style="background:#fff;border:1px solid var(--b);border-radius:6px;padding:.8rem">
+<canvas id="c2_chaney" height="180"></canvas>
+<p style="font-size:.72rem;color:var(--m);margin-top:.3rem"><strong>Chaney Gap:</strong> Our classification finds more scientists every century. <a href="index.html#chaney-gap">See full chart →</a></p>
+</div>
+<div style="background:#fff;border:1px solid var(--b);border-radius:6px;padding:.8rem">
+<canvas id="c2_region" height="180"></canvas>
+<p style="font-size:.72rem;color:var(--m);margin-top:.3rem"><strong>Regional bias:</strong> 57.7% European. Islamicate scholarship studied through Western catalogues. <a href="index.html#regional">See full chart →</a></p>
+</div>
+</div>
+<p style="font-size:.78rem;margin-top:.5rem"><strong>Also useful:</strong> <a href="context.html">Literature review table</a> (decline vs counter-arguments) · <a href="data.html">Provenance guide</a></p>
 </div>
 </div>
 
@@ -117,6 +148,21 @@ function showOption(n) {
 <div class="insight">
 <strong>Potential argument:</strong> Integration inherits the container error. When you place Islamic concepts into Western categories, you reproduce the same mistake Chaney makes: the categories decide what counts before the content arrives. The data shows this isn't just a theoretical problem — it produces measurable distortions (1.4% vs 6.5% scientists). Epistemology-first avoids this because it builds from the tradition's own categories, which organise knowledge by obligation (fard/mandub/mubah) rather than by type (science/not-science).
 </div>
+
+<div style="margin:1rem 0">
+<h3 style="font-size:.95rem;color:var(--a)">Relevant Charts</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+<div style="background:#fff;border:1px solid var(--b);border-radius:6px;padding:.8rem">
+<canvas id="c3_chaney" height="180"></canvas>
+<p style="font-size:.72rem;color:var(--m);margin-top:.3rem"><strong>Container Error:</strong> Same data, different classification → different result. <a href="index.html#chaney-gap">See full chart →</a></p>
+</div>
+<div style="background:#fff;border:1px solid var(--b);border-radius:6px;padding:.8rem">
+<canvas id="c3_domain" height="180"></canvas>
+<p style="font-size:.72rem;color:var(--m);margin-top:.3rem"><strong>Domain River:</strong> No field declines. The tradition reallocated. <a href="index.html#domain-river">See full chart →</a></p>
+</div>
+</div>
+<p style="font-size:.78rem;margin-top:.5rem"><strong>Also useful:</strong> <a href="index.html#women">Women scholars</a> (1,689 invisible to VIAF) · <a href="context.html#missing">What's missing</a> (manuscripts) · <a href="data.html">All downloads</a></p>
+</div>
 </div>
 
 </div>
@@ -135,6 +181,21 @@ function showOption(n) {
 
 <div class="insight">
 <strong>Potential argument:</strong> Modernity shaped the flourishing question by narrowing it to what can be measured by the buffered self (subjective wellbeing, self-report scales). The Chaney data shows this narrowing operating at civilisational scale. The Islamic tradition offers a different account: constitutive 'afiya (soundness of orientation toward God) coexists with grief, loss, and civilisational catastrophe. The Prophet wept for Ibrahim but said nothing that displeased Allah. A psychology that can only see the therapeutic kind will systematically misread people and civilisations oriented toward the constitutive kind.
+</div>
+
+<div style="margin:1rem 0">
+<h3 style="font-size:.95rem;color:var(--a)">Relevant Charts</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+<div style="background:#fff;border:1px solid var(--b);border-radius:6px;padding:.8rem">
+<canvas id="c4_domain" height="180"></canvas>
+<p style="font-size:.72rem;color:var(--m);margin-top:.3rem"><strong>What flourishing built:</strong> Medicine, fiqh, tasawwuf, poetry — all grew. <a href="index.html#domain-river">See full chart →</a></p>
+</div>
+<div style="background:#fff;border:1px solid var(--b);border-radius:6px;padding:.8rem">
+<canvas id="c4_commentary" height="180"></canvas>
+<p style="font-size:.72rem;color:var(--m);margin-top:.3rem"><strong>Maintenance ≠ stagnation:</strong> Commentary tradition as sustained care. <a href="index.html#commentary">See full chart →</a></p>
+</div>
+</div>
+<p style="font-size:.78rem;margin-top:.5rem"><strong>Also useful:</strong> <a href="index.html#women">Women scholars</a> (constitutive ʿafiya made visible) · <a href="index.html#scholars">Scholar Explorer</a> · <a href="context.html">Full context</a></p>
 </div>
 </div>
 
@@ -194,5 +255,57 @@ Islamic Knowledge Atlas | Bilal Ghalib | CMC PGCert Islam & Psychology | 2026<br
 This atlas is offered as a gift to the CMC community. Use it, extend it, share it.
 </footer>
 </div>
+
+<script>
+const C = ['800s','900s','1000s','1100s','1200s','1300s','1400s'];
+const GF = {family:'Georgia',size:10};
+const miniOpts = {responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:GF}},y:{beginAtZero:true,ticks:{font:GF}}}};
+
+// Domain River mini (for options 1, 3, 4)
+function domainMini(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  new Chart(el.getContext('2d'), {type:'line',data:{labels:C,datasets:[
+    {label:'Tasawwuf',data:[42,77,135,151,224,301,217],borderColor:'#7c3aed',fill:false,tension:.3,borderWidth:1.5,pointRadius:0},
+    {label:'Fiqh',data:[74,106,134,181,186,281,172],borderColor:'#2d5a27',fill:false,tension:.3,borderWidth:1.5,pointRadius:0},
+    {label:'Medicine',data:[26,42,48,44,68,42,44],borderColor:'#dc2626',fill:false,tension:.3,borderWidth:1.5,pointRadius:0},
+    {label:'Poetry',data:[137,153,269,293,318,418,263],borderColor:'#0891b2',fill:false,tension:.3,borderWidth:1.5,pointRadius:0}
+  ]},options:{...miniOpts,plugins:{legend:{display:true,position:'bottom',labels:{font:{family:'Georgia',size:8},boxWidth:8}}}}});
+}
+
+// Commentary mini (for options 1, 4)
+function commentaryMini(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  new Chart(el.getContext('2d'), {type:'bar',data:{labels:C,datasets:[{data:[6.0,6.7,8.4,13.3,11.8,13.1,11.6],backgroundColor:'rgba(139,77,19,.5)',borderColor:'#8b4513',borderWidth:1}]},options:{...miniOpts,scales:{...miniOpts.scales,y:{...miniOpts.scales.y,max:20,ticks:{callback:v=>v+'%',font:GF}}}}});
+}
+
+// Chaney Gap mini (for options 2, 3)
+function chaneyMini(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  new Chart(el.getContext('2d'), {type:'line',data:{labels:C,datasets:[
+    {label:'Ours',data:[6.7,5.3,18.1,4.1,5.1,4.8,5.1],borderColor:'#2d5a27',tension:.3,borderWidth:2,pointRadius:2},
+    {label:'Chaney',data:[3.5,3.99,2.97,2.71,2.96,2.01,1.43],borderColor:'#dc2626',borderDash:[4,4],tension:.3,borderWidth:2,pointRadius:2}
+  ]},options:{...miniOpts,plugins:{legend:{display:true,position:'bottom',labels:{font:{family:'Georgia',size:8},boxWidth:8}}}}});
+}
+
+// Region mini (for option 2)
+function regionMini(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  new Chart(el.getContext('2d'), {type:'doughnut',data:{
+    labels:['Europe','East Asia','Mashriq','Unknown','South Asia','Central Asia','Maghrib','Andalus'],
+    datasets:[{data:[20546,4899,4677,2144,1253,853,642,592],backgroundColor:['#3b82f6','#0891b2','#2d5a27','#9ca3af','#7c3aed','#ea580c','#d97706','#dc2626']}]
+  },options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{family:'Georgia',size:8},boxWidth:8}}}}});
+}
+
+// Render all
+domainMini('c1_domain'); commentaryMini('c1_commentary');
+chaneyMini('c2_chaney'); regionMini('c2_region');
+chaneyMini('c3_chaney'); domainMini('c3_domain');
+domainMini('c4_domain'); commentaryMini('c4_commentary');
+</script>
+
 </body>
 </html>
