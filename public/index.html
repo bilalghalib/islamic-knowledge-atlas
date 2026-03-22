@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Islamic Knowledge Atlas | 35,606 Scholars</title>
+<meta name="description" content="Interactive visualization of 35,000+ pre-modern scholars classified by AI. Challenges the decline narrative with data.">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+<style>
+:root{--bg:#faf9f6;--t:#1a1a1a;--m:#666;--a:#2d5a27;--a2:#8b4513;--b:#ddd;--r:#dc2626}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Georgia,serif;background:var(--bg);color:var(--t);line-height:1.7;font-size:17px}
+.c{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
+h1{font-size:2.6rem;letter-spacing:-.5px;line-height:1.2;margin-bottom:.5rem}
+h2{font-size:1.5rem;margin:3rem 0 1rem;color:var(--a2);border-bottom:2px solid var(--a2);padding-bottom:.3rem}
+h3{font-size:1.1rem;margin:1.5rem 0 .5rem}
+p{margin-bottom:1rem;text-align:justify;hyphens:auto}
+a{color:var(--a);text-decoration:none;border-bottom:1px solid var(--a)}
+a:hover{color:var(--a2);border-color:var(--a2)}
+.hero{text-align:center;padding:3rem 0 2rem;border-bottom:3px solid var(--a)}
+.hero .sub{color:var(--m);font-size:1.1rem;font-style:italic;margin-bottom:1rem}
+.hero .by{font-size:.9rem;color:var(--m)}
+.stats{display:flex;gap:.8rem;margin:2rem 0;flex-wrap:wrap;justify-content:center}
+.stat{flex:1;min-width:120px;max-width:160px;background:#fff;border:1px solid var(--b);border-radius:6px;padding:.7rem;text-align:center}
+.stat .n{font-size:1.5rem;font-weight:bold;color:var(--a)}.stat .l{font-size:.7rem;color:var(--m)}
+.cw{background:#fff;border:1px solid var(--b);border-radius:6px;padding:1.2rem;margin:1.5rem 0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.cw canvas{max-height:380px}
+.cc{font-size:.8rem;color:var(--m);text-align:center;margin-top:.5rem;font-style:italic}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1rem;margin:1rem 0}
+.card{background:#fff;border:1px solid var(--b);border-radius:6px;padding:1rem;font-size:.85rem}
+.card .nm{font-weight:bold;font-size:.95rem;margin-bottom:.3rem}
+.card .meta{color:var(--m);font-size:.78rem;margin-bottom:.5rem}
+.badge{display:inline-block;padding:.1rem .4rem;border-radius:10px;font-size:.68rem;margin:.1rem;border:1px solid}
+.badge.sci{background:#dbeafe;color:#1e40af;border-color:#93c5fd}
+.badge.isl{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
+.badge.hum{background:#fef3c7;color:#92400e;border-color:#fcd34d}
+.badge.oth{background:#f3f4f6;color:#555;border-color:#d1d5db}
+.filters{display:flex;gap:.5rem;margin:1rem 0;flex-wrap:wrap;align-items:center}
+.filters select,.filters input{font-family:inherit;font-size:.85rem;padding:.3rem .6rem;border:1px solid var(--b);border-radius:4px;background:#fff}
+.filters input{flex:1;min-width:200px}
+.btn{padding:.3rem .8rem;border:1px solid var(--b);border-radius:4px;background:#fff;cursor:pointer;font-family:inherit;font-size:.8rem}
+.btn:hover{border-color:var(--a);color:var(--a)}
+.btn.on{background:var(--a);color:#fff;border-color:var(--a)}
+.method{background:#fff;border:1px solid var(--b);border-radius:6px;padding:1.5rem;margin:1rem 0}
+.method h3{margin-top:0;color:var(--a)}
+footer{margin-top:3rem;padding:1.5rem 0;border-top:1px solid var(--b);font-size:.8rem;color:var(--m);text-align:center}
+@media(max-width:650px){.c{padding:1rem}.stats{gap:.5rem}h1{font-size:1.8rem}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="c">
+
+<!-- HERO -->
+<div class="hero">
+<h1>Islamic Knowledge Atlas</h1>
+<p class="sub">35,606 scholars. AI-classified. Every claim evidenced.</p>
+<p class="by">Bilal Ghalib | CMC PGCert Islam & Psychology | 2026</p>
+<div class="stats" id="heroStats"></div>
+</div>
+
+<!-- 1. THE CHANEY GAP -->
+<h2>1. The Chaney Gap</h2>
+<p>Eric Chaney (2023) argues that the proportion of scientists in the Islamic world declined after the 11th century. Our reanalysis of 35,606 VIAF records, classified by Claude Sonnet 4.6, finds a consistently higher scientist percentage in every century. The gap widens in precisely the centuries Chaney identifies as the steepest decline.</p>
+<div class="cw">
+<canvas id="chaneyGap"></canvas>
+<p class="cc">Our title-based classification (green) vs Chaney's biographical dictionary classification (red). The gap widens from +1.4% in the 1100s to +3.8% in the 1400s.</p>
+</div>
+
+<!-- 2. DOMAIN RIVER -->
+<h2>2. The Domain River: What MENA Scholars Actually Produced</h2>
+<p>Every field grows in absolute terms through the supposed "decline." Tasawwuf grows 7.2x. Fiqh grows 3.8x. Poetry grows 3.1x. Medicine remains stable. The "decline" is purely proportional: science grew, everything else grew faster.</p>
+<div class="cw">
+<canvas id="domainRiver"></canvas>
+<p class="cc">Absolute counts of MENA scholars by domain, 800s-1400s. No field declines. The tradition reallocated, it did not contract.</p>
+</div>
+
+<!-- 3. COMMENTARY REALITY -->
+<h2>3. Commentary: Stagnation or Depth?</h2>
+<p>Chaney claims commentaries rose from under 10% to over 30%, evidence of "channeling intellectual production towards reproducing approved knowledge." Our data shows commentary as a stable 6-14% of classified works. Saliba (2007) notes these were "in some ways superior to modern periodicals in their demand for comprehensive synthesis."</p>
+<div class="cw">
+<canvas id="commentaryChart"></canvas>
+<p class="cc">Commentary percentage by century. Stable, not exploding. Each commentary requires mastery of all previous layers.</p>
+</div>
+
+<!-- 4. REGIONAL BREAKDOWN -->
+<h2>4. Who Produced What, Where</h2>
+<div class="cw">
+<canvas id="regionChart"></canvas>
+<p class="cc">Geographic distribution of all 35,606 classified scholars. MENA regions (Mashriq, Maghrib, Andalus, Central Asia, South Asia) account for 22% of VIAF records.</p>
+</div>
+
+<!-- 5. SCHOLAR EXPLORER -->
+<h2>5. Scholar Explorer</h2>
+<p>200 notable MENA scholars who were scientists, polymaths, or both. Each classification includes title evidence (from library catalogs) and background knowledge (from AI training data), with confidence scores and Wikipedia references.</p>
+
+<div class="filters">
+<input type="text" id="searchBox" placeholder="Search by name...">
+<select id="centuryFilter"><option value="">All centuries</option></select>
+<select id="domainFilter"><option value="">All domains</option></select>
+<select id="typeFilter">
+<option value="">All types</option>
+<option value="scientist">Scientists</option>
+<option value="polymath">Polymaths</option>
+<option value="both">Both</option>
+</select>
+</div>
+<div class="grid" id="scholarGrid"></div>
+<button class="btn" id="showMore" style="display:none;margin:1rem auto;display:block">Show more</button>
+
+<!-- 6. METHODOLOGY -->
+<h2>6. Methodology</h2>
+<div class="grid">
+<div class="method">
+<h3>Data Source</h3>
+<p>85,043 author records from the complete VIAF (Virtual International Authority File) 2024 dump. Filtered to pre-1500 CE authors with work titles. 35,606 successfully classified.</p>
+</div>
+<div class="method">
+<h3>Classification</h3>
+<p>Each scholar classified by Claude Sonnet 4.6 with two layers: <strong>title evidence</strong> (strictly from library catalog titles) and <strong>background knowledge</strong> (from training data, with Wikipedia references). Confidence scored 0-100.</p>
+</div>
+<div class="method">
+<h3>Two Scientist Measures</h3>
+<p><strong>Strict:</strong> title evidence alone supports a science domain with confidence &ge; 60. <strong>Broad:</strong> any evidence (title or background) supports science with confidence &ge; 40. Chaney's measure uses occupation labels from biographical dictionaries.</p>
+</div>
+<div class="method">
+<h3>Limitations</h3>
+<p>VIAF overrepresents scholars whose works survived in modern library collections. Classification depends on transliterated titles, which vary across library systems. Background knowledge may introduce post-hoc information not available to contemporaries.</p>
+</div>
+</div>
+
+<footer>
+Islamic Knowledge Atlas | Data: VIAF 2024 | Classification: Claude Sonnet 4.6 | Analysis: Bilal Ghalib, March 2026<br>
+Built for the CMC PGCert in Islam & Psychology, Module 2
+</footer>
+
+</div>
+
+<script>
+const GEO = {family:'Georgia',size:12};
+const GEOS = {family:'Georgia',size:11};
+const CENTURIES = ['800s','900s','1000s','1100s','1200s','1300s','1400s'];
+const DOMAIN_COLORS = {
+  medicine:'#dc2626', fiqh:'#2d5a27', hadith:'#1e40af', tasawwuf:'#7c3aed',
+  falsafa:'#ea580c', poetry:'#0891b2', history:'#854d0e', astronomy:'#be185d',
+  kalam:'#059669', tafsir:'#4f46e5', mathematics:'#d97706', mantiq:'#64748b'
+};
+
+function domainBadge(d) {
+  const sci = ['medicine','mathematics','astronomy','optics','chemistry','geography','engineering','natural_history','pharmacology'];
+  const isl = ['fiqh','usul_al_fiqh','hadith','tafsir','kalam','tasawwuf','falsafa','mantiq'];
+  const hum = ['poetry','history','biography','adab','nahw','sarf','balagha'];
+  let cls = 'oth';
+  if (sci.includes(d)) cls = 'sci';
+  else if (isl.includes(d)) cls = 'isl';
+  else if (hum.includes(d)) cls = 'hum';
+  return `<span class="badge ${cls}">${d}</span>`;
+}
+
+fetch('data/scholars.json').then(r=>r.json()).then(data => {
+  // Hero stats
+  const total = data.meta.total;
+  const mena = (data.by_region.Mashriq||0)+(data.by_region.Maghrib||0)+(data.by_region.Andalus||0)+(data.by_region['Central_Asia']||0)+(data.by_region['South_Asia']||0);
+  let totalSci = 0, totalPoly = 0;
+  Object.values(data.by_century).forEach(c => { totalSci += c.sci_strict; totalPoly += c.polymath; });
+  document.getElementById('heroStats').innerHTML = `
+    <div class="stat"><div class="n">${total.toLocaleString()}</div><div class="l">Scholars classified</div></div>
+    <div class="stat"><div class="n">${mena.toLocaleString()}</div><div class="l">MENA scholars</div></div>
+    <div class="stat"><div class="n">${totalSci.toLocaleString()}</div><div class="l">Scientists (strict)</div></div>
+    <div class="stat"><div class="n">${totalPoly.toLocaleString()}</div><div class="l">Polymaths</div></div>
+    <div class="stat"><div class="n">7</div><div class="l">Centuries</div></div>
+  `;
+
+  // 1. Chaney Gap
+  const centuries = Object.keys(data.by_century);
+  new Chart(document.getElementById('chaneyGap').getContext('2d'), {
+    type:'line',
+    data:{
+      labels: centuries.map(c=>c+'s'),
+      datasets:[
+        {label:'Our classification (strict, title evidence)',
+         data:centuries.map(c=>data.by_century[c].sci_strict_pct),
+         borderColor:'#2d5a27',backgroundColor:'rgba(45,90,39,.1)',fill:true,tension:.3,borderWidth:2,pointRadius:4},
+        {label:"Chaney's classification (biographical dictionaries)",
+         data:centuries.map(c=>data.by_century[c].chaney_pct),
+         borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,.1)',fill:true,tension:.3,borderWidth:2,borderDash:[5,5],pointRadius:4}
+      ]
+    },
+    options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:GEOS}}},
+      scales:{y:{title:{display:true,text:'% of all scholars classified as scientists',font:GEO},min:0,max:20}}}
+  });
+
+  // 2. Domain River
+  const domainOrder = ['medicine','fiqh','tasawwuf','hadith','poetry','history','astronomy','kalam','tafsir','falsafa','mathematics','mantiq'];
+  new Chart(document.getElementById('domainRiver').getContext('2d'), {
+    type:'line',
+    data:{
+      labels: centuries.map(c=>c+'s'),
+      datasets: domainOrder.filter(d=>data.domains_by_century_mena[d]).map(d=>({
+        label:d,
+        data:centuries.map(c=>data.domains_by_century_mena[d][c]||0),
+        borderColor:DOMAIN_COLORS[d]||'#999',
+        backgroundColor:(DOMAIN_COLORS[d]||'#999')+'33',
+        fill:true,tension:.3,borderWidth:1.5,pointRadius:0
+      }))
+    },
+    options:{responsive:true,
+      plugins:{legend:{position:'bottom',labels:{font:GEOS,boxWidth:12}}},
+      scales:{
+        x:{stacked:true,ticks:{font:GEOS}},
+        y:{stacked:true,title:{display:true,text:'Number of MENA scholars',font:GEO}}
+      }}
+  });
+
+  // 3. Commentary
+  new Chart(document.getElementById('commentaryChart').getContext('2d'), {
+    type:'bar',
+    data:{
+      labels: centuries.map(c=>c+'s'),
+      datasets:[{
+        label:'Commentary %',
+        data:centuries.map(c=>{
+          const d=data.by_century[c];
+          return d.total ? Math.round(d.commentary/d.total*1000)/10 : 0;
+        }),
+        backgroundColor:'rgba(139,77,19,.6)',borderColor:'#8b4513',borderWidth:1
+      }]
+    },
+    options:{responsive:true,plugins:{legend:{display:false}},
+      scales:{y:{title:{display:true,text:'% of works that are commentaries',font:GEO},max:20,
+        ticks:{callback:v=>v+'%'}}}}
+  });
+
+  // 4. Region
+  const regionLabels = Object.keys(data.by_region);
+  const regionData = Object.values(data.by_region);
+  const regionColors = ['#2d5a27','#0891b2','#ea580c','#64748b','#7c3aed','#dc2626','#d97706','#1e40af'];
+  new Chart(document.getElementById('regionChart').getContext('2d'), {
+    type:'doughnut',
+    data:{
+      labels:regionLabels,
+      datasets:[{data:regionData,backgroundColor:regionColors.slice(0,regionLabels.length),borderWidth:1}]
+    },
+    options:{responsive:true,plugins:{legend:{position:'right',labels:{font:GEOS}}}}
+  });
+
+  // 5. Scholar Explorer
+  const scholars = data.top_scholars;
+  const centurySet = new Set(scholars.map(s=>s.century));
+  const domainSet = new Set();
+  scholars.forEach(s=>(s.all_domains||[]).forEach(d=>domainSet.add(d)));
+
+  const cf = document.getElementById('centuryFilter');
+  [...centurySet].sort().forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c+'s';cf.appendChild(o);});
+  const df = document.getElementById('domainFilter');
+  [...domainSet].sort().forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;df.appendChild(o);});
+
+  let showCount = 24;
+
+  function renderScholars() {
+    const search = document.getElementById('searchBox').value.toLowerCase();
+    const century = cf.value;
+    const domain = df.value;
+    const type = document.getElementById('typeFilter').value;
+
+    let filtered = scholars.filter(s => {
+      if (search && !s.name.toLowerCase().includes(search)) return false;
+      if (century && s.century != century) return false;
+      if (domain && !(s.all_domains||[]).includes(domain)) return false;
+      if (type === 'scientist' && !s.scientist) return false;
+      if (type === 'polymath' && !s.polymath) return false;
+      if (type === 'both' && (!s.scientist || !s.polymath)) return false;
+      return true;
+    });
+
+    const grid = document.getElementById('scholarGrid');
+    grid.innerHTML = filtered.slice(0,showCount).map(s => {
+      const domains = (s.all_domains||[]).map(domainBadge).join('');
+      const flags = [];
+      if (s.scientist) flags.push('<span class="badge sci">Scientist</span>');
+      if (s.polymath) flags.push('<span class="badge isl">Polymath</span>');
+      const wiki = s.wikipedia ? `<a href="${s.wikipedia}" target="_blank" style="font-size:.75rem">Wikipedia &rarr;</a>` : '';
+      return `<div class="card">
+        <div class="nm">${s.name}</div>
+        <div class="meta">${s.century}s | ${s.region} | ${s.source_count} libraries | ${s.work_type} ${wiki}</div>
+        <div>${flags.join('')}</div>
+        <div style="margin-top:.4rem">${domains}</div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('showMore').style.display = filtered.length > showCount ? 'block' : 'none';
+  }
+
+  document.getElementById('searchBox').addEventListener('input', ()=>{showCount=24;renderScholars()});
+  cf.addEventListener('change', ()=>{showCount=24;renderScholars()});
+  df.addEventListener('change', ()=>{showCount=24;renderScholars()});
+  document.getElementById('typeFilter').addEventListener('change', ()=>{showCount=24;renderScholars()});
+  document.getElementById('showMore').addEventListener('click', ()=>{showCount+=24;renderScholars()});
+
+  renderScholars();
+});
+</script>
+</body>
+</html>

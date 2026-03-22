@@ -1,0 +1,9 @@
+{
+  "name": "islamic-knowledge-atlas",
+  "version": "1.0.0",
+  "description": "Interactive visualization of 35,000+ pre-modern scholars from VIAF, classified by domain using AI. Challenges the 'decline of Islamic science' narrative with data.",
+  "scripts": {
+    "dev": "npx serve public",
+    "build": "echo 'Static site, no build needed'"
+  }
+}

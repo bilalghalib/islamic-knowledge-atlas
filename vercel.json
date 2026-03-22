@@ -1,0 +1,20 @@
+{
+  "buildCommand": "",
+  "outputDirectory": "public",
+  "headers": [
+    {
+      "source": "/data/(.*)",
+      "headers": [
+        {"key": "Cache-Control", "value": "public, max-age=86400"},
+        {"key": "Content-Type", "value": "application/json"}
+      ]
+    },
+    {
+      "source": "/data/scholars.db.gz",
+      "headers": [
+        {"key": "Content-Type", "value": "application/gzip"},
+        {"key": "Cache-Control", "value": "public, max-age=604800"}
+      ]
+    }
+  ]
+}
