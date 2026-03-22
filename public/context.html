@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Context | Islamic Knowledge Atlas</title>
+<style>
+:root{--bg:#faf9f6;--t:#1a1a1a;--m:#666;--a:#2d5a27;--a2:#8b4513;--b:#ddd;--r:#dc2626}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Georgia,serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:17px}
+.c{max-width:800px;margin:0 auto;padding:2rem 1.5rem}
+h1{font-size:2.2rem;letter-spacing:-.5px;line-height:1.2;margin-bottom:.5rem}
+h2{font-size:1.4rem;margin:2.5rem 0 1rem;color:var(--a2);border-bottom:2px solid var(--a2);padding-bottom:.3rem}
+h3{font-size:1.1rem;margin:1.5rem 0 .5rem}
+p{margin-bottom:1rem}
+a{color:var(--a)}
+nav{padding:1rem 0;border-bottom:1px solid var(--b);margin-bottom:2rem;font-size:.9rem}
+nav a{color:var(--a);margin-right:1.5rem;text-decoration:none;border-bottom:1px solid var(--a)}
+nav a.active{font-weight:bold;color:var(--a2);border-color:var(--a2)}
+blockquote{border-left:3px solid var(--a);padding:.8rem 1.2rem;margin:1.5rem 0;background:#f8f8f5;font-style:italic}
+.card{background:#fff;border:1px solid var(--b);border-radius:6px;padding:1.2rem;margin:1rem 0}
+.card h3{margin-top:0;color:var(--a)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.tag{display:inline-block;padding:.15rem .5rem;border-radius:10px;font-size:.72rem;margin:.1rem}
+.tag.decline{background:#fee2e2;color:#991b1b}
+.tag.counter{background:#d1fae5;color:#065f46}
+.tag.meta{background:#dbeafe;color:#1e40af}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+th{background:var(--a);color:#fff;padding:.5rem;text-align:left}
+td{padding:.5rem;border-bottom:1px solid var(--b)}
+tr:nth-child(even){background:#fafaf8}
+footer{margin-top:3rem;padding:1rem 0;border-top:1px solid var(--b);font-size:.8rem;color:var(--m);text-align:center}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.c{padding:1rem}}
+</style>
+</head>
+<body>
+<div class="c">
+<nav>
+<a href="index.html">Atlas</a>
+<a href="context.html" class="active">Context</a>
+<a href="data.html">Data & Downloads</a>
+<a href="research.html">For Researchers</a>
+</nav>
+
+<h1>Why This Exists</h1>
+<p style="color:var(--m);font-style:italic;margin-bottom:2rem">Numbers always live inside interpretive frames. Here is the frame, and what happens when you change it.</p>
+
+<h2>The Question</h2>
+
+<p>Did Islamic science decline? A growing body of quantitative scholarship says yes. Eric Chaney's "Religion and the Rise and Fall of Islamic Science" (2016/2023) is the most methodologically careful version of this argument. He counts scholars in biographical dictionaries, finds the proportion classified as "scientists" dropped from ~4% to ~1.4% between the 800s and 1400s, and attributes the decline to the political empowerment of religious leaders.</p>
+
+<p>Chaney is careful. He blames "institutions empowering religious elites, not Islam itself" (p. 6). He concedes that Western scholarship may have "systematically ignored the works of later scientists," producing a "spurious downward trend" (p. 16). His data is real.</p>
+
+<p>But data doesn't interpret itself. The same numbers, received by a different interpretive frame, tell a different story.</p>
+
+<h2>The Interpretive Frame</h2>
+
+<p>Chaney's framework makes three assumptions:</p>
+
+<div class="card">
+<h3>1. Science and religion are separate categories</h3>
+<p>Each scholar is classified as either a scientist or not. But the tradition didn't recognise this boundary. Mehmed Birgevi (d. 1573), the inspiration for the puritanical Kadizadeli movement, classified mathematics and logic as <em>fard kifaya</em> (communal religious obligations). A mathematician in 17th-century Istanbul was fulfilling a religious duty. Chaney's framework sees a scientist. The tradition saw a scholar discharging communal obligation. Both are true. Neither is the whole truth.</p>
+</div>
+
+<div class="card">
+<h3>2. Proportion is the right measure of health</h3>
+<p>If you have 100 scholars and 4 are scientists, that's 4%. If you then educate 1,000 more people and 14 of them are scientists, that's 1.4%. Science "declined" by 63%. But you have 3.5x more scientists than before, serving a broader educated population. The "decline" is democratisation measured with an aristocratic ruler.</p>
+</div>
+
+<div class="card">
+<h3>3. The commentary tradition is stagnation</h3>
+<p>Chaney links rising commentaries to "channeling intellectual production towards reproducing approved knowledge." But Saliba (2007) — whom Chaney cites — calls these commentaries "in some ways superior to modern periodicals in their demand for comprehensive synthesis." Each commentary layer requires mastery of all previous layers. That's more intellectually demanding than writing an "original" work from scratch.</p>
+</div>
+
+<h2>What We Did</h2>
+
+<p>We processed the complete VIAF (Virtual International Authority File) 2024 dump: 85,043 pre-1500 author records with work titles. We classified 35,606 scholars using Claude Sonnet 4.6, with two layers:</p>
+
+<ul style="margin:1rem 0 1rem 1.5rem">
+<li><strong>Title evidence:</strong> what the library catalog titles actually say (conservative, fully defensible)</li>
+<li><strong>Background knowledge:</strong> what the AI knows about the scholar beyond the titles (broader, with Wikipedia references)</li>
+</ul>
+
+<p>Each classification has a confidence score (0-100), so you can filter by how certain the evidence is. Every claim is traceable to a specific title or a specific Wikipedia article.</p>
+
+<h2>What We Found</h2>
+
+<p>Our title-based classification finds <strong>6.5% scientists</strong> across all centuries — nearly 5x Chaney's 1.4% for the 1400s. The gap is largest in exactly the centuries he identifies as the steepest decline. Every field grows in absolute terms: medicine 6.3x, philosophy 6.5x, mathematics 4.2x. No domain declines.</p>
+
+<p>The difference isn't about data quality. Our VIAF extract (~9,500 MENA authors by name pattern) is comparable in size to Chaney's VIAF component (~8,660). The difference is classification method: he uses occupation labels from biographical dictionaries (one box per scholar), we classify by work titles (catches polymaths who wrote across domains).</p>
+
+<h2>The Broader Conversation</h2>
+
+<p>Chaney's paper doesn't exist in isolation. It participates in a long tradition of quantitative arguments about Islamic intellectual history. Some argue decline; others challenge the framework itself.</p>
+
+<table>
+<tr><th>Scholar</th><th>Position</th><th>Key Work</th></tr>
+<tr><td>Chaney</td><td><span class="tag decline">Decline</span> Religious authority crowded out science</td><td>"Religion and the Rise and Fall of Islamic Science"</td></tr>
+<tr><td>Rubin</td><td><span class="tag decline">Decline</span> Political economy of religious legitimation</td><td><em>Rulers, Religion, and Riches</em> (2017)</td></tr>
+<tr><td>Kuran</td><td><span class="tag decline">Decline</span> Islamic legal institutions caused stagnation</td><td><em>The Long Divergence</em> (2011)</td></tr>
+<tr><td>Huff</td><td><span class="tag decline">Decline</span> Madrasas lacked institutional autonomy</td><td><em>Rise of Early Modern Science</em> (2003)</td></tr>
+<tr><td>Saliba</td><td><span class="tag counter">Counter</span> Post-Ghazali astronomy was MORE innovative</td><td><em>Islamic Science and the European Renaissance</em> (2007)</td></tr>
+<tr><td>Ragep</td><td><span class="tag counter">Counter</span> Madrasa scholars did cutting-edge science</td><td>Multiple papers (2005+)</td></tr>
+<tr><td>El-Rouayheb</td><td><span class="tag counter">Counter</span> 17th c. Ottoman intellectual life was vibrant</td><td><em>Islamic Intellectual History in the 17th Century</em> (2015)</td></tr>
+<tr><td>Brentjes</td><td><span class="tag counter">Counter</span> "Decline" categories are imported and distorting</td><td><em>Teaching and Learning the Sciences</em> (2018)</td></tr>
+<tr><td>Dallal</td><td><span class="tag counter">Counter</span> Science continued; decline overstated</td><td><em>Islam, Science, and the Challenge of History</em> (2010)</td></tr>
+<tr><td>Hallaq</td><td><span class="tag meta">Meta</span> The entire framework is Orientalist</td><td><em>Restating Orientalism</em> (2018)</td></tr>
+<tr><td>Aydin</td><td><span class="tag meta">Meta</span> "Muslim world" that "declined" is a 19th c. invention</td><td><em>The Idea of the Muslim World</em> (2017)</td></tr>
+<tr><td>Moosa</td><td><span class="tag meta">Meta</span> Ghazali has been caricatured</td><td><em>Ghazali and the Poetics of Imagination</em> (2005)</td></tr>
+</table>
+
+<h2>Psychology and the Soul</h2>
+
+<p>This project emerged from an essay for the Cambridge Muslim College PGCert in Islam & Psychology. The connection is not accidental.</p>
+
+<p>The word "psychology" comes from <em>psyche</em> (soul) + <em>logos</em> (study). Psychology was the study of the soul. Over the past century, it moved toward studying neural activity, cognitive processes, and behaviour — measurable things. The soul, being unmeasurable, was quietly dropped.</p>
+
+<p>The same move that makes tasawwuf (the science of spiritual states) "not science" in Chaney's framework is the move that makes the <em>ruh</em> (spirit) "not psychology" in modern clinical practice. Both are acts of category narrowing: the container decides what counts before the content arrives.</p>
+
+<p>As Abdal Hakim Murad observes: "Once we said <em>know thyself</em>. Nowadays we say <em>show thyself</em>." The shift from knowledge as reception (the porous self, open to what flows from beyond) to knowledge as production (the buffered self, sealed within its own certainty) is the same shift that makes a 700-year commentary tradition look like stagnation to one frame and like living knowledge architecture to another.</p>
+
+<h2>What's Missing from the Data</h2>
+
+<p>Our 85,043 VIAF records represent what modern library systems have catalogued. But hundreds of thousands of manuscripts remain uncatalogued:</p>
+
+<div class="grid">
+<div class="card">
+<h3>Iran</h3>
+<p>Astan Quds Razavi Library (Mashhad): ~70,000 manuscripts. Majlis Library (Tehran): ~25,000. Seminary libraries in Qom: uncounted thousands. Most uncatalogued in Western systems.</p>
+</div>
+<div class="card">
+<h3>Timbuktu</h3>
+<p>Ahmed Baba Institute: ~40,000 manuscripts. Private family libraries: estimated 300,000+. Subjects: astronomy, medicine, law, theology. Many in danger of deterioration.</p>
+</div>
+<div class="card">
+<h3>Turkey</h3>
+<p>Suleymaniye Library (Istanbul): ~70,000 manuscripts. The 1928 script change severed access to Ottoman-era scholarship overnight. 88+ psychology works remain untranslated.</p>
+</div>
+<div class="card">
+<h3>India</h3>
+<p>Khuda Bakhsh Library (Patna): ~21,000 manuscripts. Rampur Raza Library: ~17,000. Languages: Arabic, Persian, Urdu. Many uncatalogued in VIAF.</p>
+</div>
+</div>
+
+<p>Brentjes (2018) puts it directly: "We have yet to identify the vast majority of teaching texts on the physical, mathematical and metaphysical sciences." All decline claims are premature because we haven't counted what's there.</p>
+
+<blockquote>"The image of decline in the twelfth to fifteenth centuries is not the product of research in manuscript archives, but an assumption made in the absence of research and encouraged for its usefulness as a tool in religious polemics." — Lindberg (2007), via Aftab</blockquote>
+
+<h2>A Note on Tone</h2>
+
+<p>This project is not an attack on Chaney or on quantitative approaches to intellectual history. Chaney's paper is methodologically careful and raises genuine questions about the political economy of knowledge production. The critique here is of the <em>interpretive frame</em>, not the data.</p>
+
+<p>Numbers are real. Interpretation is a choice. The same data that shows "declining proportion of scientists" also shows "expanding educated population producing more scholars per capita during civilisational catastrophe." Both readings are true. The question is which frame serves understanding and which serves a narrative.</p>
+
+<p>This atlas is offered as a tool for asking better questions, not as a weapon for winning arguments.</p>
+
+<footer>
+Islamic Knowledge Atlas | Bilal Ghalib | CMC PGCert Islam & Psychology | 2026
+</footer>
+</div>
+</body>
+</html>

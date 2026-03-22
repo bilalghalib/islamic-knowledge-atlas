@@ -2,3 +2,4 @@ node_modules/
 .vercel/
 *.db
 !public/data/scholars.db.gz
+.vercel

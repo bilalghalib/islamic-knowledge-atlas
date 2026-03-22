@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data & Downloads | Islamic Knowledge Atlas</title>
+<style>
+:root{--bg:#faf9f6;--t:#1a1a1a;--m:#666;--a:#2d5a27;--a2:#8b4513;--b:#ddd}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Georgia,serif;background:var(--bg);color:var(--t);line-height:1.7;font-size:17px}
+.c{max-width:800px;margin:0 auto;padding:2rem 1.5rem}
+h1{font-size:2.2rem;letter-spacing:-.5px;margin-bottom:.5rem}
+h2{font-size:1.4rem;margin:2.5rem 0 1rem;color:var(--a2);border-bottom:2px solid var(--a2);padding-bottom:.3rem}
+h3{font-size:1.05rem;margin:1rem 0 .5rem}
+p{margin-bottom:1rem}
+a{color:var(--a)}
+nav{padding:1rem 0;border-bottom:1px solid var(--b);margin-bottom:2rem;font-size:.9rem}
+nav a{color:var(--a);margin-right:1.5rem;text-decoration:none;border-bottom:1px solid var(--a)}
+nav a.active{font-weight:bold;color:var(--a2);border-color:var(--a2)}
+.card{background:#fff;border:1px solid var(--b);border-radius:6px;padding:1.2rem;margin:1rem 0}
+.card h3{margin-top:0;color:var(--a)}
+.dl{display:inline-block;padding:.4rem 1rem;background:var(--a);color:#fff;border-radius:4px;font-size:.85rem;border:none;margin:.3rem .3rem 0 0;text-decoration:none}
+.dl:hover{background:var(--a2);color:#fff}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:1rem 0}
+th{background:var(--a);color:#fff;padding:.4rem .6rem;text-align:left}
+td{padding:.4rem .6rem;border-bottom:1px solid var(--b)}
+code{background:#f3f4f6;padding:.1rem .3rem;border-radius:3px;font-size:.85rem}
+footer{margin-top:3rem;padding:1rem 0;border-top:1px solid var(--b);font-size:.8rem;color:var(--m);text-align:center}
+</style>
+</head>
+<body>
+<div class="c">
+<nav>
+<a href="index.html">Atlas</a>
+<a href="context.html">Context</a>
+<a href="data.html" class="active">Data & Downloads</a>
+<a href="research.html">For Researchers</a>
+</nav>
+
+<h1>Data & Downloads</h1>
+<p style="color:var(--m);font-style:italic">Everything is open. Download, verify, extend.</p>
+
+<h2>Downloads</h2>
+
+<div class="card">
+<h3>Aggregate Statistics (84 KB)</h3>
+<p>Summary data: scholar counts by century, domain breakdowns for MENA scholars, Chaney comparison percentages, regional distribution, top 200 notable scholars with Wikipedia links.</p>
+<a class="dl" href="data/scholars.json" download>scholars.json (84 KB)</a>
+</div>
+
+<div class="card">
+<h3>Full Scholar Database (6.5 MB compressed)</h3>
+<p>All 35,606 classified scholars with title evidence, background knowledge, confidence scores, domains, region, work type, and Wikipedia references. SQLite format, compressed with gzip.</p>
+<a class="dl" href="data/scholars.db.gz" download>scholars.db.gz (6.5 MB)</a>
+</div>
+
+<div class="card">
+<h3>MENA Scholars by Century</h3>
+<p>8,017 MENA-region scholars with full classification details. Split by century for easy browsing.</p>
+<a class="dl" href="data/scholars_800.json" download>800s (573 KB)</a>
+<a class="dl" href="data/scholars_900.json" download>900s (735 KB)</a>
+<a class="dl" href="data/scholars_1000.json" download>1000s (932 KB)</a>
+<a class="dl" href="data/scholars_1100.json" download>1100s (957 KB)</a>
+<a class="dl" href="data/scholars_1200.json" download>1200s (1.2 MB)</a>
+<a class="dl" href="data/scholars_1300.json" download>1300s (1.5 MB)</a>
+<a class="dl" href="data/scholars_1400.json" download>1400s (969 KB)</a>
+</div>
+
+<h2>Data Pipeline</h2>
+
+<div class="card">
+<h3>Step 1: VIAF Extraction</h3>
+<p>Downloaded the complete VIAF 2024 clusters XML dump (21.4 GB compressed, ~150 GB uncompressed). Streamed through a Python parser that extracted pre-1500 authors with death dates, work titles, library source counts, and name variants.</p>
+<p><strong>Result:</strong> 85,043 author records</p>
+<p><strong>Key detail:</strong> The extraction streams through the gzip without decompressing to disk. Only the matching records are kept.</p>
+</div>
+
+<div class="card">
+<h3>Step 2: AI Classification</h3>
+<p>Each of the 36,158 scholars with work titles was classified individually by Claude Sonnet 4.6, producing:</p>
+<table>
+<tr><th>Field</th><th>Description</th></tr>
+<tr><td><code>title_evidence</code></td><td>Domains supported ONLY by the catalog titles. Each entry: domain, evidence quote, confidence (0-100)</td></tr>
+<tr><td><code>background_knowledge</code></td><td>Domains the AI knows about beyond the titles. Each entry: domain, explanation, confidence, Wikipedia reference</td></tr>
+<tr><td><code>chaney_strict</code></td><td>True if title evidence alone supports a science domain with confidence ≥ 60</td></tr>
+<tr><td><code>chaney_broad</code></td><td>True if any evidence supports a science domain with confidence ≥ 40</td></tr>
+<tr><td><code>polymath_strict/broad</code></td><td>True if 3+ distinct domains at respective confidence thresholds</td></tr>
+<tr><td><code>region</code></td><td>Best estimate: Mashriq, Maghrib, Andalus, Central_Asia, South_Asia, Europe, East_Asia</td></tr>
+</table>
+<p><strong>Key design choice:</strong> Two classification layers (title vs background) so you can distinguish "what the data shows" from "what we know." The gap between them IS the argument: library catalogs can't see what the tradition knows.</p>
+</div>
+
+<div class="card">
+<h3>Step 3: Recovery</h3>
+<p>The classification database was accidentally dropped during a script crash. We recovered 35,606 of 35,978 records (99.0%) from SQLite's freelist pages, then matched them back to VIAF records using title evidence strings and Wikipedia URLs as matching keys.</p>
+<p><strong>Verification rate:</strong> 78.6% matched by title content, remainder matched by sequential ordering with fuzzy verification.</p>
+</div>
+
+<h2>Domain Codes</h2>
+
+<table>
+<tr><th>Category</th><th>Domains</th><th>Chaney "Science"?</th></tr>
+<tr><td>Natural Sciences</td><td>medicine, mathematics, astronomy, optics, chemistry, geography, engineering, natural_history, pharmacology</td><td>Yes</td></tr>
+<tr><td>Islamic Sciences</td><td>fiqh, usul_al_fiqh, hadith, tafsir, kalam, tasawwuf, falsafa, mantiq</td><td>No</td></tr>
+<tr><td>Language Sciences</td><td>nahw, sarf, balagha, adab, lexicography</td><td>No</td></tr>
+<tr><td>Humanities</td><td>poetry, history, biography, travel</td><td>No</td></tr>
+<tr><td>Other</td><td>politics, economics, ethics, education, music, agriculture, military, architecture</td><td>No</td></tr>
+</table>
+
+<p>Note: <strong>falsafa</strong> (philosophy) and <strong>mantiq</strong> (logic) are classified as "Islamic Sciences" following the tradition's own categorisation. Chaney would not count these as science. This is itself a finding: the tradition classified rational inquiry as religious duty.</p>
+
+<h2>Limitations</h2>
+
+<ul style="margin:1rem 0 1rem 1.5rem">
+<li>VIAF overrepresents scholars whose works survived in modern Western library collections (83% Western library coverage)</li>
+<li>AI classification depends on transliterated titles, which vary across library systems</li>
+<li>Background knowledge may introduce post-hoc information not available to contemporaries</li>
+<li>Region assignment is approximate (based on AI inference from names and titles)</li>
+<li>Confidence scores are the AI's self-assessment, not independently validated</li>
+<li>The 21.4% of records that couldn't be matched during recovery may have slightly different characteristics than the matched records</li>
+</ul>
+
+<h2>Source Code</h2>
+
+<p>All code, data, and analysis scripts are available on GitHub:</p>
+<p><a href="https://github.com/bilalghalib/islamic-knowledge-atlas">github.com/bilalghalib/islamic-knowledge-atlas</a></p>
+
+<footer>
+Islamic Knowledge Atlas | Bilal Ghalib | CMC PGCert Islam & Psychology | 2026
+</footer>
+</div>
+</body>
+</html>
