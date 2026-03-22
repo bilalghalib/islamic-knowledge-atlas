@@ -75,7 +75,7 @@ footer{margin-top:3rem;padding:1.5rem 0;border-top:1px solid var(--b);font-size:
 <a href="research.html#option2" style="display:block;padding:.8rem;background:#fff;border:2px solid #d1fae5;border-radius:6px;text-decoration:none;border-bottom:none">
 <div style="font-weight:bold;color:#065f46;font-size:.85rem">Option 2: Religion in Psychology</div>
 <div style="font-size:.75rem;color:#666;margin-top:.3rem">How psychology conceptualised religion → Freud/Jung → what can be retained or revised</div>
-<div style="font-size:.7rem;color:#065f46;margin-top:.3rem">Use: Chaney Gap, MENA library bias, Regional data →</div>
+<div style="font-size:.7rem;color:#065f46;margin-top:.3rem">Use: Chaney Gap, Islamicate library bias, Regional data →</div>
 </a>
 <a href="research.html#option3" style="display:block;padding:.8rem;background:#fff;border:2px solid #fef3c7;border-radius:6px;text-decoration:none;border-bottom:none">
 <div style="font-weight:bold;color:#92400e;font-size:.85rem">Option 3: Integration vs Islamic Paradigm</div>
@@ -100,11 +100,11 @@ footer{margin-top:3rem;padding:1.5rem 0;border-top:1px solid var(--b);font-size:
 </div>
 
 <!-- 2. DOMAIN RIVER -->
-<h2id="domain-river">2. The Domain River: What MENA Scholars Actually Produced</h2>
+<h2id="domain-river">2. The Domain River: What Islamicate Scholars Actually Produced</h2>
 <p>Every field grows in absolute terms through the supposed "decline." Tasawwuf grows 7.2x. Fiqh grows 3.8x. Poetry grows 3.1x. Medicine remains stable. The "decline" is purely proportional: science grew, everything else grew faster.</p>
 <div class="cw">
 <canvas id="domainRiver"></canvas>
-<p class="cc">Absolute counts of MENA scholars by domain, 800s-1400s. No field declines. The tradition reallocated, it did not contract.</p>
+<p class="cc">Absolute counts of Islamicate scholars by domain, 800s-1400s. No field declines. The tradition reallocated, it did not contract.</p>
 </div>
 
 <!-- 3. COMMENTARY REALITY -->
@@ -119,12 +119,12 @@ footer{margin-top:3rem;padding:1.5rem 0;border-top:1px solid var(--b);font-size:
 <h2id="regional">4. Who Produced What, Where</h2>
 <div class="cw">
 <canvas id="regionChart"></canvas>
-<p class="cc">Geographic distribution of all 35,606 classified scholars. MENA regions (Mashriq, Maghrib, Andalus, Central Asia, South Asia) account for 22% of VIAF records.</p>
+<p class="cc">Geographic distribution of all 35,606 classified scholars. Islamicate regions (Mashriq, Maghrib, Andalus, Central Asia, South Asia) account for 22% of VIAF records.</p>
 </div>
 
 <!-- 5. SCHOLAR EXPLORER -->
 <h2id="scholars">5. Scholar Explorer</h2>
-<p>200 notable MENA scholars who were scientists, polymaths, or both. Each classification includes title evidence (from library catalogs) and background knowledge (from AI training data), with confidence scores and Wikipedia references.</p>
+<p>200 notable Islamicate scholars who were scientists, polymaths, or both. Each classification includes title evidence (from library catalogs) and background knowledge (from AI training data), with confidence scores and Wikipedia references.</p>
 
 <div class="filters">
 <input type="text" id="searchBox" placeholder="Search by name...">
@@ -229,7 +229,7 @@ fetch('data/scholars.json').then(r=>r.json()).then(data => {
   Object.values(data.by_century).forEach(c => { totalSci += c.sci_strict; totalPoly += c.polymath; });
   document.getElementById('heroStats').innerHTML = `
     <div class="stat"><div class="n">${total.toLocaleString()}</div><div class="l">Scholars classified</div></div>
-    <div class="stat"><div class="n">${mena.toLocaleString()}</div><div class="l">MENA scholars</div></div>
+    <div class="stat"><div class="n">${mena.toLocaleString()}</div><div class="l">Islamicate scholars</div></div>
     <div class="stat"><div class="n">${totalSci.toLocaleString()}</div><div class="l">Scientists (strict)</div></div>
     <div class="stat"><div class="n">${totalPoly.toLocaleString()}</div><div class="l">Polymaths</div></div>
     <div class="stat"><div class="n">7</div><div class="l">Centuries</div></div>
@@ -272,7 +272,7 @@ fetch('data/scholars.json').then(r=>r.json()).then(data => {
       plugins:{legend:{position:'bottom',labels:{font:GEOS,boxWidth:12}}},
       scales:{
         x:{stacked:true,ticks:{font:GEOS}},
-        y:{stacked:true,title:{display:true,text:'Number of MENA scholars',font:GEO}}
+        y:{stacked:true,title:{display:true,text:'Number of Islamicate scholars',font:GEO}}
       }}
   });
 
