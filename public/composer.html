@@ -3,45 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Essay Composer</title>
-<!-- SortableJS for drag reorder -->
+<title>Composer</title>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <style>
-:root{--bg:#faf9f6;--t:#1a1a1a;--m:#888;--a:#2d5a27;--a2:#8b4513;--b:#e0e0e0;--r:#dc2626;--radius:4px}
+:root{--bg:#faf9f6;--fg:#1a1a1a;--dim:#999;--accent:#2d5a27;--warm:#8b4513;--border:#e0e0e0;--r:4px;--red:#dc2626;--blue:#2563eb;--green:#059669;--orange:#d97706;--purple:#7c3aed}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Georgia,serif;background:var(--bg);color:var(--t);line-height:1.6;font-size:15px}
+body{font-family:Georgia,serif;background:var(--bg);color:var(--fg);font-size:15px;line-height:1.6}
 
 /* Layout */
-.app{display:flex;height:100vh}
-.sidebar{width:280px;background:#fff;border-right:1px solid var(--b);display:flex;flex-direction:column;flex-shrink:0}
-.sidebar-head{padding:.6rem .8rem;border-bottom:1px solid var(--b)}
-.sidebar-head h1{font-size:1.1rem;margin-bottom:.2rem}
-.sidebar-body{flex:1;overflow-y:auto;padding:.3rem}
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.toolbar{display:flex;align-items:center;gap:.8rem;padding:.4rem 1rem;background:#fff;border-bottom:1px solid var(--b);font-size:.78rem;flex-shrink:0}
-.toolbar .st{font-weight:bold;color:var(--a)}
-.essay-scroll{flex:1;overflow-y:auto;padding:1.5rem 2.5rem 3rem}
+.app{display:grid;grid-template-columns:260px 1fr 300px;height:100vh;overflow:hidden}
+.app.detail-closed{grid-template-columns:260px 1fr}
+.app.sidebar-closed{grid-template-columns:0 1fr 300px}
+.app.sidebar-closed.detail-closed{grid-template-columns:0 1fr}
 
-/* View toggle */
-.view-tabs{display:flex;gap:0;margin-left:auto}
-.view-tabs button{padding:.25rem .6rem;border:1px solid var(--b);background:#fff;cursor:pointer;font-family:inherit;font-size:.72rem;color:var(--m)}
-.view-tabs button:first-child{border-radius:var(--radius) 0 0 var(--radius)}
-.view-tabs button:last-child{border-radius:0 var(--radius) var(--radius) 0}
-.view-tabs button.on{background:var(--a);color:#fff;border-color:var(--a)}
+/* Login overlay */
+.login{position:fixed;inset:0;background:rgba(250,249,246,.97);z-index:100;display:flex;align-items:center;justify-content:center}
+.login.hidden{display:none}
+.login-box{text-align:center;max-width:280px}
+.login-box h2{font-size:1.1rem;margin-bottom:.8rem;font-weight:normal}
+.login-box input{display:block;width:100%;padding:.4rem .6rem;margin:.3rem 0;border:1px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:.85rem}
+.login-box button{margin-top:.5rem;padding:.4rem 1.2rem;background:var(--accent);color:#fff;border:none;border-radius:var(--r);cursor:pointer;font-family:inherit;font-size:.85rem}
+.login-box .err{color:var(--red);font-size:.75rem;margin-top:.3rem}
 
-/* Sidebar items */
-.sblock{padding:.35rem .5rem;margin:.15rem .3rem;border:1px solid var(--b);border-radius:var(--radius);cursor:grab;font-size:.75rem;transition:background .1s;display:flex;align-items:center;gap:.3rem}
-.sblock:hover{background:#f5f5f0}
-.sblock.active{background:#d1fae5;border-color:var(--a)}
-.sblock .grip{color:var(--b);cursor:grab;font-size:.9rem;user-select:none}
-.sblock .num{color:var(--a);font-weight:bold;font-size:.65rem;min-width:18px}
-.sblock .fn-tag{padding:.02rem .2rem;border-radius:4px;font-size:.58rem;white-space:nowrap}
-.sblock .words{color:var(--m);font-size:.62rem;margin-left:auto;white-space:nowrap}
-.sblock .preview-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.7rem;color:#555}
+/* Sidebar */
+.sidebar{background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s}
+.sb-head{padding:.5rem .6rem;border-bottom:1px solid var(--border)}
+.sb-head h1{font-size:.95rem;display:flex;align-items:center;gap:.3rem}
+.sb-head .status{font-size:.6rem;padding:.1rem .3rem;border-radius:8px;background:#d1fae5;color:var(--green)}
+.sb-head .status.saving{background:#fef3c7;color:var(--orange)}
+.sb-head .status.err{background:#fee2e2;color:var(--red)}
+.sb-head .status.offline{background:#f3f4f6;color:var(--dim)}
+.filters{display:flex;gap:.2rem;margin-top:.3rem;flex-wrap:wrap}
+.filters select{font-size:.68rem;padding:.1rem .2rem;border:1px solid var(--border);border-radius:var(--r);font-family:inherit;background:#fff}
+.sb-list{flex:1;overflow-y:auto;padding:.2rem}
+.sb-foot{padding:.3rem;border-top:1px solid var(--border)}
+.sb-foot button{width:100%;padding:.25rem;border:1px dashed var(--border);border-radius:var(--r);background:transparent;cursor:pointer;font-family:inherit;font-size:.72rem;color:var(--dim)}
+.sb-foot button:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Sidebar blocks */
+.sbl{padding:.3rem .4rem;margin:.1rem;border:1px solid var(--border);border-radius:var(--r);cursor:grab;font-size:.72rem;display:flex;align-items:center;gap:.25rem;transition:background .1s;min-height:28px}
+.sbl:hover{background:#f5f5f0}
+.sbl.on{background:#d1fae5;border-color:var(--accent)}
+.sbl .grip{color:var(--border);cursor:grab;font-size:.8rem;user-select:none;flex-shrink:0}
+.sbl .num{color:var(--accent);font-weight:bold;font-size:.6rem;min-width:14px;flex-shrink:0}
+.sbl .tag{padding:.02rem .2rem;border-radius:3px;font-size:.55rem;white-space:nowrap;flex-shrink:0}
+.sbl .prev{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#666;font-size:.68rem}
+.sbl .wc{color:var(--dim);font-size:.58rem;flex-shrink:0}
 .sortable-ghost{opacity:.3}
 .sortable-chosen{background:#fef3c7!important}
 
-/* Function tag colors */
+/* Tags */
 [data-fn="Claim"]{background:#dbeafe;color:#1e40af}
 [data-fn="Evidence"]{background:#d1fae5;color:#065f46}
 [data-fn="Reasoning"]{background:#fef3c7;color:#92400e}
@@ -50,156 +61,421 @@ body{font-family:Georgia,serif;background:var(--bg);color:var(--t);line-height:1
 [data-fn="Structure"]{background:#f3f4f6;color:#555}
 [data-fn="Counter"]{background:#fce7f3;color:#9d174d}
 [data-fn="Illustration"]{background:#e0f2fe;color:#0369a1}
+[data-sl="ontology"]{background:#dbeafe;color:#1e40af}
+[data-sl="epistemology"]{background:#d1fae5;color:#065f46}
+[data-sl="axiology"]{background:#fef3c7;color:#92400e}
+[data-sl="teleology"]{background:#fee2e2;color:#991b1b}
+[data-ps="offer"]{background:#d1fae5;color:#065f46}
+[data-ps="unblock"]{background:#fef3c7;color:#92400e}
+[data-ps="reflect"]{background:#dbeafe;color:#1e40af}
 
-/* Essay paragraphs */
-.section-heading{font-size:1.05rem;color:var(--a2);margin:1.5rem 0 .3rem;border-bottom:1px solid var(--b);padding-bottom:.2rem}
-.para-block{padding:.5rem .7rem;margin:.2rem 0;border-left:3px solid transparent;border-radius:0 var(--radius) var(--radius) 0;cursor:pointer;position:relative;transition:all .1s}
-.para-block:hover{background:#fafaf5;border-left-color:var(--b)}
-.para-block.active{background:#f0fdf4;border-left-color:var(--a)}
-.para-block.is-insert{border-left-style:dashed;border-left-color:var(--r)}
-.para-block .para-meta{position:absolute;right:.5rem;top:.3rem;display:flex;gap:.3rem;align-items:center}
-.para-block .para-meta .fn-tag{font-size:.58rem;padding:.02rem .25rem;border-radius:4px}
-.para-block .para-meta .wcount{font-size:.62rem;color:var(--m)}
-.para-block .bilal-marker{position:absolute;left:-8px;top:50%;transform:translateY(-50%);width:6px;height:6px;background:var(--r);border-radius:50%}
-.para-text{font-size:.88rem;padding-right:100px;outline:none;min-height:1.5em}
-.para-text:focus{background:#fffbeb}
-.para-block .para-actions{display:none;position:absolute;right:.5rem;bottom:.3rem;gap:.2rem}
-.para-block:hover .para-actions{display:flex}
-.para-actions button{font-size:.6rem;padding:.1rem .3rem;border:1px solid var(--b);border-radius:2px;background:#fff;cursor:pointer;color:var(--m)}
-.para-actions button:hover{border-color:var(--r);color:var(--r)}
+/* Main area */
+.main{display:flex;flex-direction:column;overflow:hidden}
+.toolbar{display:flex;align-items:center;gap:.6rem;padding:.35rem .8rem;background:#fff;border-bottom:1px solid var(--border);font-size:.75rem;flex-shrink:0}
+.toolbar .st{font-weight:bold;color:var(--accent)}
+.vtabs{display:flex;gap:0;margin-left:auto}
+.vtabs button{padding:.2rem .5rem;border:1px solid var(--border);background:#fff;cursor:pointer;font-family:inherit;font-size:.68rem;color:var(--dim)}
+.vtabs button:first-child{border-radius:var(--r) 0 0 var(--r)}
+.vtabs button:last-child{border-radius:0 var(--r) var(--r) 0}
+.vtabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tb-btn{font-size:.65rem;padding:.15rem .4rem;border:1px solid var(--border);border-radius:var(--r);background:#fff;cursor:pointer;font-family:inherit;color:var(--dim)}
+.tb-btn:hover{border-color:var(--accent);color:var(--accent)}
+.scroll{flex:1;overflow-y:auto;padding:1rem 2rem 3rem}
+
+/* Essay view */
+.sec-h{font-size:.95rem;color:var(--warm);margin:1.2rem 0 .2rem;border-bottom:1px solid var(--border);padding-bottom:.15rem}
+.pb{padding:.4rem .6rem;margin:.15rem 0;border-left:3px solid transparent;border-radius:0 var(--r) var(--r) 0;position:relative;transition:all .1s;cursor:pointer}
+.pb:hover{background:#fafaf5;border-left-color:var(--border)}
+.pb.on{background:#f0fdf4;border-left-color:var(--accent)}
+.pb.insert{border-left-style:dashed;border-left-color:var(--red)}
+.pb .pmeta{position:absolute;right:.4rem;top:.2rem;display:flex;gap:.2rem;align-items:center}
+.pb .pmeta .tag{font-size:.52rem}
+.pb .pmeta .wc{font-size:.58rem;color:var(--dim)}
+.pb .bilal-dot{position:absolute;left:-7px;top:50%;transform:translateY(-50%);width:5px;height:5px;background:var(--red);border-radius:50%}
+.ptext{font-size:.85rem;padding-right:90px;outline:none;min-height:1.2em}
+.ptext:focus{background:#fffbeb}
+.pb .pact{display:none;position:absolute;right:.4rem;bottom:.2rem}
+.pb:hover .pact{display:flex;gap:.2rem}
+.pact button{font-size:.55rem;padding:.08rem .2rem;border:1px solid var(--border);border-radius:2px;background:#fff;cursor:pointer;color:var(--dim)}
+.pact button:hover{border-color:var(--red);color:var(--red)}
+
+/* Journey view */
+.jblock{display:grid;grid-template-columns:80px 1fr 160px;gap:.5rem;padding:.4rem 0;margin:.2rem 0;border-bottom:1px solid #f0f0ea;align-items:start}
+.jblock.on{background:#f0fdf4;border-radius:var(--r)}
+.jleft{display:flex;flex-direction:column;gap:.15rem;align-items:flex-end;padding-right:.3rem}
+.jleft .tag{font-size:.52rem;text-align:right}
+.jcenter{font-size:.85rem;cursor:pointer}
+.jcenter:hover{background:#fafaf5}
+.jright{font-size:.7rem;color:var(--dim);padding-left:.3rem;border-left:1px solid var(--border)}
+.jright .jfield{margin-bottom:.3rem}
+.jright .jlabel{font-size:.58rem;text-transform:uppercase;letter-spacing:.03em;color:var(--dim)}
+.jright .jval{font-size:.72rem;color:var(--fg)}
+.jright .jval.empty{color:var(--border);font-style:italic;cursor:pointer}
+.jright .jval.empty:hover{color:var(--accent)}
 
 /* Table view */
-.table-view{width:100%;border-collapse:collapse;font-size:.78rem}
-.table-view th{background:var(--a);color:#fff;padding:.3rem .4rem;text-align:left;font-weight:normal;position:sticky;top:0}
-.table-view td{padding:.3rem .4rem;border-bottom:1px solid var(--b);max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.table-view tr:hover{background:#f5f5f0}
-.table-view tr.active{background:#d1fae5}
+.tv{width:100%;border-collapse:collapse;font-size:.75rem}
+.tv th{background:var(--accent);color:#fff;padding:.25rem .3rem;text-align:left;font-weight:normal;position:sticky;top:0;font-size:.68rem}
+.tv td{padding:.25rem .3rem;border-bottom:1px solid var(--border);max-width:350px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tv tr:hover{background:#f5f5f0}
+.tv tr.on{background:#d1fae5}
 
-/* Add button */
-.add-btn{width:100%;padding:.3rem;border:1px dashed var(--b);border-radius:var(--radius);background:transparent;cursor:pointer;font-family:inherit;font-size:.75rem;color:var(--m);margin:.3rem 0}
-.add-btn:hover{border-color:var(--a);color:var(--a)}
+/* Detail panel */
+.detail{background:#fff;border-left:1px solid var(--border);overflow-y:auto;padding:.8rem;transition:width .2s}
+.detail h3{font-size:.88rem;color:var(--accent);margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center}
+.detail .close{border:none;background:none;cursor:pointer;font-size:1rem;color:var(--dim)}
+.detail .close:hover{color:var(--red)}
+.detail label{display:block;font-size:.65rem;color:var(--dim);margin-top:.5rem;text-transform:uppercase;letter-spacing:.03em}
+.detail select,.detail textarea,.detail input[type=text]{width:100%;font-family:inherit;font-size:.8rem;padding:.25rem .4rem;border:1px solid var(--border);border-radius:var(--r);margin-top:.15rem}
+.detail textarea{min-height:60px;resize:vertical;line-height:1.5}
+.detail .linked{margin-top:.5rem;padding:.3rem;background:#fafaf5;border-radius:var(--r);font-size:.72rem}
+.detail .linked h4{font-size:.7rem;color:var(--dim);margin-bottom:.2rem}
+.detail .save-row{margin-top:.6rem;display:flex;gap:.3rem}
+.detail .save-row button{flex:1;padding:.3rem;border:1px solid var(--border);border-radius:var(--r);background:#fff;cursor:pointer;font-family:inherit;font-size:.75rem}
+.detail .save-row button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-/* Filters */
-.filters{display:flex;gap:.3rem;padding:.3rem .8rem;flex-wrap:wrap}
-.filters select{font-family:inherit;font-size:.7rem;padding:.15rem .3rem;border:1px solid var(--b);border-radius:var(--radius)}
+/* Mobile */
+@media(max-width:900px){
+  .app{grid-template-columns:0 1fr!important}
+  .sidebar{position:fixed;left:-280px;top:0;bottom:0;width:280px;z-index:20;transition:left .2s;box-shadow:2px 0 10px rgba(0,0,0,.1)}
+  .sidebar.open{left:0}
+  .detail{position:fixed;right:-300px;top:0;bottom:0;width:300px;z-index:20;transition:right .2s;box-shadow:-2px 0 10px rgba(0,0,0,.1)}
+  .detail.open{right:0}
+  .scroll{padding:.8rem}
+  .mob-toggle{display:inline-block!important}
+}
+.mob-toggle{display:none;font-size:.75rem;cursor:pointer;padding:.15rem .3rem;border:1px solid var(--border);border-radius:var(--r);background:#fff}
 </style>
 </head>
 <body>
-<div class="app">
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-<div class="sidebar-head">
-  <h1 id="title">Essay Composer</h1>
+<!-- Login -->
+<div class="login" id="loginOverlay">
+<div class="login-box">
+  <h2>Composer</h2>
+  <p style="font-size:.8rem;color:var(--dim);margin-bottom:.6rem">Connect to Baserow</p>
+  <input type="email" id="loginEmail" placeholder="Email">
+  <input type="password" id="loginPass" placeholder="Password">
+  <button onclick="doLogin()">Connect</button>
+  <button onclick="goOffline()" style="background:transparent;color:var(--dim);border:1px solid var(--border);margin-left:.3rem">Offline</button>
+  <div class="err" id="loginErr"></div>
+</div>
+</div>
+
+<!-- App -->
+<div class="app detail-closed" id="app">
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+<div class="sb-head">
+  <h1>Composer <span class="status" id="connStatus">offline</span></h1>
   <div class="filters">
-    <select id="fSec"><option value="">All sections</option></select>
-    <select id="fFn"><option value="">All functions</option></select>
+    <select id="fSec" onchange="renderSidebar()"><option value="">All sections</option></select>
+    <select id="fFn" onchange="renderSidebar()"><option value="">All functions</option></select>
   </div>
 </div>
-<div class="sidebar-body" id="sidebarList"></div>
-<button class="add-btn" onclick="addParagraph()">+ Add paragraph</button>
+<div class="sb-list" id="sbList"></div>
+<div class="sb-foot">
+  <button onclick="addBlock()">+ Add block</button>
+</div>
 </div>
 
-<!-- MAIN -->
+<!-- Main -->
 <div class="main">
 <div class="toolbar">
+  <button class="mob-toggle" onclick="toggleSidebar()">☰</button>
   <span>Words: <span class="st" id="wTotal">0</span>/4000</span>
   <span>¶ <span class="st" id="pTotal">0</span></span>
-  <div class="view-tabs">
-    <button class="on" onclick="setView('essay')" id="vEssay">Essay</button>
-    <button onclick="setView('table')" id="vTable">Table</button>
+  <span id="saveIndicator" style="font-size:.65rem;color:var(--dim)"></span>
+  <div class="vtabs">
+    <button class="on" onclick="setView('essay')" data-v="essay">Essay</button>
+    <button onclick="setView('journey')" data-v="journey">Journey</button>
+    <button onclick="setView('table')" data-v="table">Table</button>
   </div>
-  <button onclick="exportMd()" style="font-size:.68rem;padding:.15rem .4rem;border:1px solid var(--b);border-radius:var(--radius);background:#fff;cursor:pointer;margin-left:.3rem">↓ .md</button>
+  <button class="tb-btn" onclick="exportMd()">↓ .md</button>
+  <button class="tb-btn mob-toggle" onclick="toggleDetail()">Details</button>
 </div>
-<div class="essay-scroll" id="mainView"></div>
+<div class="scroll" id="mainView"></div>
+</div>
+
+<!-- Detail -->
+<div class="detail" id="detailPanel">
+<h3><span id="detailTitle">Select a block</span> <button class="close" onclick="closeDetail()">×</button></h3>
+<div id="detailBody"></div>
 </div>
 
 </div>
 
 <script>
-let data = [];
+// ─── Config ───
+const BR = 'https://base.wayway.ai/api';
+const T = { blocks: 771, compositions: 770, insights: 764 };
+const F = {
+  name:7243, notes:7244, pos:7251, section:7252, content:7253,
+  insights:7255, words:7257, fn:7258, comp:7259,
+  sl:7261, assumes:7262, posture:7263, invitation:7264
+};
+const OPTS = {
+  section: {'Introduction':3337,'1. Modernity':3338,'2. Western Psychology':3339,'3. Integration':3340,'4. Comparative Judgement':3341,'Conclusion':3342},
+  fn: {'Claim':3343,'Evidence':3344,'Reasoning':3345,'Counter':3346,'Illustration':3347,'Voice':3348,'Move':3349,'Structure':3350},
+  sl: {'ontology':3351,'epistemology':3352,'axiology':3353,'teleology':3354},
+  posture: {'offer':3355,'unblock':3356,'reflect':3357}
+};
+// Reverse maps (id → value)
+const REV = {};
+for (const [group, map] of Object.entries(OPTS)) {
+  REV[group] = {};
+  for (const [val, id] of Object.entries(map)) REV[group][id] = val;
+}
+
+// ─── State ───
+let token = localStorage.getItem('br_token');
+let blocks = [];
 let active = null;
 let view = 'essay';
+let online = false;
+let saveQueue = new Map(); // id → patch
+let saveTimer = null;
 
-async function init() {
-  const r = await fetch('data/essay_composition.json');
-  const d = await r.json();
-  data = [];
-  let pos = 1;
-  d.sections.forEach(sec => {
-    sec.paragraphs.forEach(p => {
-      data.push({...p, section: sec.name, pos: pos++});
+// ─── Auth ───
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPass').value;
+  try {
+    const r = await fetch(`${BR}/user/token-auth/`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email, password: pass})
     });
-  });
-  buildFilters();
-  render();
-  initDrag();
+    if (!r.ok) throw new Error('Bad credentials');
+    const d = await r.json();
+    token = d.token;
+    localStorage.setItem('br_token', token);
+    online = true;
+    document.getElementById('loginOverlay').classList.add('hidden');
+    setStatus('connected');
+    await loadBlocks();
+  } catch(e) {
+    document.getElementById('loginErr').textContent = e.message;
+  }
 }
 
+function goOffline() {
+  online = false;
+  document.getElementById('loginOverlay').classList.add('hidden');
+  setStatus('offline');
+  loadFromCache();
+}
+
+function setStatus(s) {
+  const el = document.getElementById('connStatus');
+  el.textContent = s;
+  el.className = 'status' + (s === 'saving' ? ' saving' : s === 'error' ? ' err' : s === 'offline' ? ' offline' : '');
+}
+
+// ─── API ───
+async function api(method, path, body) {
+  const opts = { method, headers: { 'Authorization': `JWT ${token}`, 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(`${BR}${path}`, opts);
+  if (r.status === 401) { token = null; localStorage.removeItem('br_token'); online = false; setStatus('expired'); return null; }
+  if (!r.ok) throw new Error(`API ${r.status}`);
+  if (r.status === 204) return null;
+  return r.json();
+}
+
+// ─── Data ───
+function parseRow(row) {
+  const sel = (fid) => row[`field_${fid}`]?.value || '';
+  const num = (fid) => parseInt(row[`field_${fid}`]) || 0;
+  const txt = (fid) => row[`field_${fid}`] || '';
+  return {
+    id: row.id, pos: num(F.pos), section: sel(F.section),
+    text: txt(F.content), words: num(F.words), fn: sel(F.fn),
+    name: txt(F.name), notes: txt(F.notes),
+    sl: sel(F.sl), assumes: txt(F.assumes),
+    posture: sel(F.posture), invitation: txt(F.invitation),
+    insights: row[`field_${F.insights}`] || [],
+    comp: row[`field_${F.comp}`] || []
+  };
+}
+
+async function loadBlocks() {
+  try {
+    // Load all blocks linked to composition 3, ordered by position
+    const d = await api('GET', `/database/rows/table/${T.blocks}/?size=200&order_by=field_${F.pos}&filter__field_${F.comp}__link_row_has=3`);
+    if (!d) return;
+    blocks = d.results.map(parseRow).filter(b => b.text); // skip empties
+    cacheBlocks();
+    buildFilters();
+    render();
+    initDrag();
+  } catch(e) {
+    console.error('Load failed:', e);
+    setStatus('error');
+    loadFromCache();
+  }
+}
+
+function cacheBlocks() {
+  localStorage.setItem('composer_blocks', JSON.stringify(blocks));
+  localStorage.setItem('composer_ts', Date.now());
+}
+
+function loadFromCache() {
+  const cached = localStorage.getItem('composer_blocks');
+  if (cached) {
+    blocks = JSON.parse(cached);
+    const ts = localStorage.getItem('composer_ts');
+    const ago = ts ? Math.round((Date.now() - parseInt(ts)) / 60000) : '?';
+    document.getElementById('saveIndicator').textContent = `cached ${ago}m ago`;
+    buildFilters();
+    render();
+    initDrag();
+  } else {
+    loadFromJSON();
+  }
+}
+
+async function loadFromJSON() {
+  try {
+    const r = await fetch('data/essay_composition.json');
+    const d = await r.json();
+    blocks = [];
+    let pos = 1;
+    d.sections.forEach(sec => {
+      sec.paragraphs.forEach(p => {
+        blocks.push({
+          id: null, pos: pos++, section: sec.name, text: p.text || '',
+          words: p.words || 0, fn: p.function || 'Reasoning', name: '',
+          notes: p.notes || '', sl: '', assumes: '', posture: '', invitation: '',
+          insights: [], comp: [], source: p.source, devices: p.devices,
+          is_insert: p.is_insert, bilal_verbatim: p.bilal_verbatim
+        });
+      });
+    });
+    buildFilters();
+    render();
+    initDrag();
+    document.getElementById('saveIndicator').textContent = 'read-only (JSON)';
+  } catch(e) { console.error(e); }
+}
+
+// ─── Save ───
+function queueSave(block, patch) {
+  if (!online || !block.id) return;
+  const existing = saveQueue.get(block.id) || {};
+  saveQueue.set(block.id, {...existing, ...patch});
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(flushSaves, 800);
+  document.getElementById('saveIndicator').textContent = 'editing...';
+}
+
+async function flushSaves() {
+  if (saveQueue.size === 0) return;
+  setStatus('saving');
+  const entries = [...saveQueue.entries()];
+  saveQueue.clear();
+  try {
+    for (const [id, patch] of entries) {
+      await api('PATCH', `/database/rows/table/${T.blocks}/${id}/`, patch);
+    }
+    setStatus('connected');
+    document.getElementById('saveIndicator').textContent = 'saved';
+    cacheBlocks();
+    setTimeout(() => { document.getElementById('saveIndicator').textContent = ''; }, 2000);
+  } catch(e) {
+    setStatus('error');
+    document.getElementById('saveIndicator').textContent = 'save failed';
+    // Re-queue failed saves
+    for (const [id, patch] of entries) saveQueue.set(id, patch);
+  }
+}
+
+async function createBlock(data) {
+  if (!online) return;
+  try {
+    const row = await api('POST', `/database/rows/table/${T.blocks}/`, data);
+    return row;
+  } catch(e) { console.error(e); return null; }
+}
+
+async function deleteBlockAPI(id) {
+  if (!online || !id) return;
+  try { await api('DELETE', `/database/rows/table/${T.blocks}/${id}/`); } catch(e) { console.error(e); }
+}
+
+// ─── Filters ───
 function buildFilters() {
-  const secs = [...new Set(data.map(p=>p.section))];
-  const fns = [...new Set(data.map(p=>p.function))];
   const fSec = document.getElementById('fSec');
   const fFn = document.getElementById('fFn');
-  secs.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;fSec.appendChild(o)});
-  fns.forEach(f=>{const o=document.createElement('option');o.value=f;o.textContent=f;fFn.appendChild(o)});
-  fSec.onchange = render;
-  fFn.onchange = render;
+  fSec.innerHTML = '<option value="">All sections</option>';
+  fFn.innerHTML = '<option value="">All functions</option>';
+  const secs = [...new Set(blocks.map(b => b.section).filter(Boolean))];
+  const fns = [...new Set(blocks.map(b => b.fn).filter(Boolean))];
+  secs.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; fSec.appendChild(o); });
+  fns.forEach(f => { const o = document.createElement('option'); o.value = f; o.textContent = f; fFn.appendChild(o); });
 }
 
+// ─── Render ───
 function render() {
   renderSidebar();
   if (view === 'essay') renderEssay();
+  else if (view === 'journey') renderJourney();
   else renderTable();
   updateStats();
+  renderDetail();
 }
 
 function renderSidebar() {
-  const list = document.getElementById('sidebarList');
+  const list = document.getElementById('sbList');
   const sf = document.getElementById('fSec').value;
   const ff = document.getElementById('fFn').value;
   list.innerHTML = '';
-  data.forEach((p, i) => {
-    if (sf && p.section !== sf) return;
-    if (ff && p.function !== ff) return;
+  blocks.forEach((b, i) => {
+    if (sf && b.section !== sf) return;
+    if (ff && b.fn !== ff) return;
     const div = document.createElement('div');
-    div.className = 'sblock' + (i === active ? ' active' : '');
+    div.className = 'sbl' + (i === active ? ' on' : '');
     div.dataset.idx = i;
-    div.innerHTML = `
-      <span class="grip">⠿</span>
-      <span class="num">${p.pos}</span>
-      <span class="fn-tag" data-fn="${p.function}">${p.function}</span>
-      <span class="preview-text">${(p.text||'').substring(0,40)}</span>
-      <span class="words">${p.words||0}w</span>
-    `;
-    div.onclick = () => { active = i; render(); };
+    div.innerHTML = `<span class="grip">⠿</span><span class="num">${b.pos}</span><span class="tag" data-fn="${b.fn}">${b.fn}</span><span class="prev">${(b.text||'').substring(0,35)}</span><span class="wc">${b.words||0}</span>`;
+    div.onclick = () => selectBlock(i);
     list.appendChild(div);
   });
 }
 
 function renderEssay() {
   const el = document.getElementById('mainView');
-  let html = '';
-  let curSec = '';
-  let cum = 0;
-  data.forEach((p, i) => {
-    if (p.section !== curSec) {
-      curSec = p.section;
-      html += `<div class="section-heading">${curSec}</div>`;
-    }
-    cum += (p.words||0);
-    let cls = 'para-block';
-    if (i === active) cls += ' active';
-    if (p.is_insert) cls += ' is-insert';
-    html += `<div class="${cls}" data-idx="${i}" onclick="select(${i})">
-      ${p.bilal_verbatim ? '<span class="bilal-marker"></span>' : ''}
-      <div class="para-meta">
-        <span class="fn-tag" data-fn="${p.function}">${p.function}</span>
-        <span class="wcount">${p.words||0}w (${cum})</span>
+  let html = '', curSec = '', cum = 0;
+  blocks.forEach((b, i) => {
+    if (b.section !== curSec) { curSec = b.section; html += `<div class="sec-h">${curSec}</div>`; }
+    cum += (b.words || 0);
+    let cls = 'pb' + (i === active ? ' on' : '') + (b.is_insert ? ' insert' : '');
+    html += `<div class="${cls}" data-idx="${i}" onclick="selectBlock(${i})">
+      ${b.bilal_verbatim ? '<span class="bilal-dot"></span>' : ''}
+      <div class="pmeta"><span class="tag" data-fn="${b.fn}">${b.fn}</span><span class="wc">${b.words||0}w (${cum})</span></div>
+      <div class="ptext" contenteditable="true" data-idx="${i}" onfocus="event.stopPropagation()" onblur="onTextBlur(${i},this)">${b.text||''}</div>
+      <div class="pact"><button onclick="event.stopPropagation();removeBlock(${i})">✕</button></div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+function renderJourney() {
+  const el = document.getElementById('mainView');
+  let html = '', curSec = '';
+  blocks.forEach((b, i) => {
+    if (b.section !== curSec) { curSec = b.section; html += `<div class="sec-h">${curSec}</div>`; }
+    const on = i === active ? ' on' : '';
+    html += `<div class="jblock${on}" onclick="selectBlock(${i})">
+      <div class="jleft">
+        <span class="tag" data-fn="${b.fn}">${b.fn}</span>
+        ${b.sl ? `<span class="tag" data-sl="${b.sl}">${b.sl}</span>` : '<span class="tag" style="background:#f9f9f9;color:#ccc">layer?</span>'}
+        ${b.posture ? `<span class="tag" data-ps="${b.posture}">${b.posture}</span>` : '<span class="tag" style="background:#f9f9f9;color:#ccc">posture?</span>'}
       </div>
-      <div class="para-text" contenteditable="true" data-idx="${i}" onblur="editText(${i}, this)">${p.text||''}</div>
-      <div class="para-actions">
-        <button onclick="event.stopPropagation();deletePara(${i})">✕ delete</button>
+      <div class="jcenter">${b.text||''}</div>
+      <div class="jright">
+        <div class="jfield"><div class="jlabel">reader assumes</div><div class="jval${b.assumes?'':' empty'}" onclick="event.stopPropagation();quickEdit(${i},'assumes',this)">${b.assumes||'click to add...'}</div></div>
+        <div class="jfield"><div class="jlabel">invitation</div><div class="jval${b.invitation?'':' empty'}" onclick="event.stopPropagation();quickEdit(${i},'invitation',this)">${b.invitation||'click to add...'}</div></div>
       </div>
     </div>`;
   });
@@ -208,114 +484,281 @@ function renderEssay() {
 
 function renderTable() {
   const el = document.getElementById('mainView');
-  let html = '<table class="table-view"><thead><tr>';
-  html += '<th>#</th><th>Section</th><th>Function</th><th>Words</th><th>Text</th><th>Source</th><th>Devices</th><th>Insert?</th><th>Bilal?</th>';
-  html += '</tr></thead><tbody>';
-  data.forEach((p, i) => {
-    html += `<tr class="${i===active?'active':''}" onclick="select(${i})">
-      <td>${p.pos}</td>
-      <td>${p.section||''}</td>
-      <td><span class="fn-tag" data-fn="${p.function}">${p.function}</span></td>
-      <td>${p.words||0}</td>
-      <td title="${(p.text||'').replace(/"/g,'&quot;')}">${(p.text||'').substring(0,80)}...</td>
-      <td>${p.source||''}</td>
-      <td>${(p.devices||[]).join(', ')}</td>
-      <td>${p.is_insert?'★':''}</td>
-      <td>${p.bilal_verbatim?'●':''}</td>
+  let html = '<table class="tv"><thead><tr><th>#</th><th>Section</th><th>Function</th><th>Words</th><th>Text</th><th>Stack</th><th>Posture</th><th>Assumes</th><th>Invitation</th><th>Notes</th></tr></thead><tbody>';
+  blocks.forEach((b, i) => {
+    html += `<tr class="${i===active?'on':''}" onclick="selectBlock(${i})">
+      <td>${b.pos}</td><td>${b.section||''}</td>
+      <td><span class="tag" data-fn="${b.fn}">${b.fn}</span></td>
+      <td>${b.words||0}</td>
+      <td title="${(b.text||'').replace(/"/g,'&quot;')}">${(b.text||'').substring(0,70)}</td>
+      <td>${b.sl ? `<span class="tag" data-sl="${b.sl}">${b.sl}</span>` : ''}</td>
+      <td>${b.posture ? `<span class="tag" data-ps="${b.posture}">${b.posture}</span>` : ''}</td>
+      <td>${(b.assumes||'').substring(0,40)}</td>
+      <td>${(b.invitation||'').substring(0,40)}</td>
+      <td>${(b.notes||'').substring(0,30)}</td>
     </tr>`;
   });
   html += '</tbody></table>';
   el.innerHTML = html;
 }
 
-function select(i) { active = i; render(); }
-
-function editText(i, el) {
-  const t = el.textContent.trim();
-  if (t !== data[i].text) {
-    data[i].text = t;
-    data[i].words = t.split(/\s+/).filter(w=>w).length;
-    renderSidebar();
-    updateStats();
+function renderDetail() {
+  const panel = document.getElementById('detailPanel');
+  const body = document.getElementById('detailBody');
+  if (active === null || active >= blocks.length) {
+    body.innerHTML = '<p style="color:var(--dim);font-size:.8rem;margin-top:1rem">Select a block to see details</p>';
+    return;
   }
+  const b = blocks[active];
+  document.getElementById('detailTitle').firstChild.textContent = `¶${b.pos} — ${b.fn}`;
+
+  let html = '';
+  // Section
+  html += `<label>Section</label><select onchange="updateField(${active},'section',this.value)">`;
+  for (const s of Object.keys(OPTS.section)) html += `<option${b.section===s?' selected':''}>${s}</option>`;
+  html += '</select>';
+
+  // Function
+  html += `<label>Function</label><select onchange="updateField(${active},'fn',this.value)">`;
+  for (const f of Object.keys(OPTS.fn)) html += `<option${b.fn===f?' selected':''}>${f}</option>`;
+  html += '</select>';
+
+  // Stack Layer
+  html += `<label>Stack Layer</label><select onchange="updateField(${active},'sl',this.value)"><option value="">—</option>`;
+  for (const s of Object.keys(OPTS.sl)) html += `<option${b.sl===s?' selected':''}>${s}</option>`;
+  html += '</select>';
+
+  // Posture
+  html += `<label>Posture</label><select onchange="updateField(${active},'posture',this.value)"><option value="">—</option>`;
+  for (const p of Object.keys(OPTS.posture)) html += `<option${b.posture===p?' selected':''}>${p}</option>`;
+  html += '</select>';
+
+  // Reader Assumes
+  html += `<label>Reader Assumes</label><textarea onblur="updateTextField(${active},'assumes',this.value)" placeholder="What does the reader believe at this point?">${b.assumes||''}</textarea>`;
+
+  // Invitation
+  html += `<label>Invitation</label><textarea onblur="updateTextField(${active},'invitation',this.value)" placeholder="What does this block invite the reader to see?">${b.invitation||''}</textarea>`;
+
+  // Notes
+  html += `<label>Notes</label><textarea onblur="updateTextField(${active},'notes',this.value)" placeholder="Internal notes">${b.notes||''}</textarea>`;
+
+  // Word count
+  html += `<label>Words</label><div style="font-size:.85rem">${b.words}</div>`;
+
+  // Linked insights
+  if (b.insights && b.insights.length) {
+    html += '<div class="linked"><h4>Linked Insights</h4>';
+    b.insights.forEach(ins => { html += `<div style="font-size:.7rem;margin:.1rem 0">• ${ins.value || ins.id}</div>`; });
+    html += '</div>';
+  }
+
+  // Source info (from JSON fallback)
+  if (b.source) html += `<label>Source</label><div style="font-size:.8rem">${b.source}</div>`;
+  if (b.devices && b.devices.length) html += `<label>Devices</label><div style="font-size:.8rem">${b.devices.join(', ')}</div>`;
+  if (b.bilal_verbatim) html += `<div style="margin-top:.5rem;color:var(--red);font-size:.75rem;font-weight:bold">● Bilal's words</div>`;
+
+  body.innerHTML = html;
 }
 
-function deletePara(i) {
-  if (!confirm('Delete this paragraph?')) return;
-  data.splice(i, 1);
-  reindex();
-  if (active >= data.length) active = data.length - 1;
+// ─── Events ───
+function selectBlock(i) {
+  active = i;
+  openDetail();
   render();
 }
 
-function addParagraph() {
-  const sec = data.length > 0 ? data[data.length-1].section : 'Introduction';
-  data.push({
-    text: 'New paragraph...', section: sec, function: 'Reasoning',
-    words: 2, pos: data.length + 1, source: '', devices: [],
-    is_insert: true, bilal_verbatim: false
-  });
-  active = data.length - 1;
+function onTextBlur(i, el) {
+  const t = el.textContent.trim();
+  if (t === blocks[i].text) return;
+  blocks[i].text = t;
+  blocks[i].words = t.split(/\s+/).filter(w => w).length;
+  const patch = { [`field_${F.content}`]: t, [`field_${F.words}`]: blocks[i].words };
+  queueSave(blocks[i], patch);
+  renderSidebar();
+  updateStats();
+}
+
+function updateField(i, field, value) {
+  blocks[i][field] = value;
+  // Map to Baserow field + option ID
+  const fieldMap = { section: F.section, fn: F.fn, sl: F.sl, posture: F.posture };
+  const optMap = { section: OPTS.section, fn: OPTS.fn, sl: OPTS.sl, posture: OPTS.posture };
+  const brField = fieldMap[field];
+  const optId = value ? optMap[field][value] : null;
+  if (brField) queueSave(blocks[i], { [`field_${brField}`]: optId });
+  renderSidebar();
+  if (view === 'journey') renderJourney();
+}
+
+function updateTextField(i, field, value) {
+  blocks[i][field] = value;
+  const fieldMap = { notes: F.notes, assumes: F.assumes, invitation: F.invitation };
+  const brField = fieldMap[field];
+  if (brField) queueSave(blocks[i], { [`field_${brField}`]: value });
+}
+
+function quickEdit(i, field, el) {
+  const current = blocks[i][field] || '';
+  const input = document.createElement('textarea');
+  input.value = current;
+  input.style.cssText = 'width:100%;font-size:.72rem;font-family:inherit;border:1px solid var(--accent);border-radius:3px;padding:.2rem;min-height:40px;resize:vertical';
+  el.replaceWith(input);
+  input.focus();
+  input.onblur = () => {
+    const val = input.value.trim();
+    blocks[i][field] = val;
+    const fieldMap = { assumes: F.assumes, invitation: F.invitation };
+    if (fieldMap[field]) queueSave(blocks[i], { [`field_${fieldMap[field]}`]: val });
+    renderJourney();
+  };
+}
+
+async function addBlock() {
+  const sec = blocks.length > 0 ? blocks[blocks.length-1].section : 'Introduction';
+  const newPos = blocks.length + 1;
+  const newBlock = {
+    id: null, pos: newPos, section: sec, text: '', words: 0,
+    fn: 'Reasoning', name: '', notes: '', sl: '', assumes: '',
+    posture: '', invitation: '', insights: [], comp: []
+  };
+
+  if (online) {
+    const row = await createBlock({
+      [`field_${F.pos}`]: newPos,
+      [`field_${F.section}`]: OPTS.section[sec] || null,
+      [`field_${F.content}`]: '',
+      [`field_${F.words}`]: 0,
+      [`field_${F.fn}`]: OPTS.fn['Reasoning'],
+      [`field_${F.comp}`]: [3]
+    });
+    if (row) newBlock.id = row.id;
+  }
+
+  blocks.push(newBlock);
+  active = blocks.length - 1;
+  openDetail();
   render();
-  // Scroll to bottom
   document.getElementById('mainView').scrollTop = 99999;
 }
 
-function reindex() {
-  data.forEach((p, i) => p.pos = i + 1);
+async function removeBlock(i) {
+  if (!confirm('Delete this block?')) return;
+  const id = blocks[i].id;
+  blocks.splice(i, 1);
+  reindex();
+  if (active >= blocks.length) active = blocks.length > 0 ? blocks.length - 1 : null;
+  render();
+  if (id) await deleteBlockAPI(id);
+  // Update positions in Baserow
+  if (online) {
+    blocks.forEach(b => {
+      if (b.id) queueSave(b, { [`field_${F.pos}`]: b.pos });
+    });
+  }
+  cacheBlocks();
 }
 
-function initDrag() {
-  const list = document.getElementById('sidebarList');
-  Sortable.create(list, {
-    animation: 150,
-    handle: '.grip',
-    ghostClass: 'sortable-ghost',
-    chosenClass: 'sortable-chosen',
-    onEnd: function(evt) {
-      // Get filtered indices
-      const items = list.querySelectorAll('.sblock');
-      const newOrder = [...items].map(el => parseInt(el.dataset.idx));
+function reindex() { blocks.forEach((b, i) => b.pos = i + 1); }
 
-      // Rebuild data in new order
+// ─── Drag ───
+function initDrag() {
+  const list = document.getElementById('sbList');
+  if (!list) return;
+  Sortable.create(list, {
+    animation: 150, handle: '.grip',
+    ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen',
+    onEnd() {
+      const items = list.querySelectorAll('.sbl');
+      const newOrder = [...items].map(el => parseInt(el.dataset.idx));
       const sf = document.getElementById('fSec').value;
       const ff = document.getElementById('fFn').value;
-
       if (!sf && !ff) {
-        // No filter: simple reorder
-        const reordered = newOrder.map(i => data[i]);
-        data.length = 0;
-        reordered.forEach(p => data.push(p));
+        const reordered = newOrder.map(i => blocks[i]);
+        blocks.length = 0;
+        reordered.forEach(b => blocks.push(b));
       }
       reindex();
+      // Save all positions
+      if (online) {
+        blocks.forEach(b => { if (b.id) queueSave(b, { [`field_${F.pos}`]: b.pos }); });
+      }
+      cacheBlocks();
       render();
     }
   });
 }
 
+// ─── Views ───
 function setView(v) {
   view = v;
-  document.getElementById('vEssay').className = v==='essay' ? 'on' : '';
-  document.getElementById('vTable').className = v==='table' ? 'on' : '';
+  document.querySelectorAll('.vtabs button').forEach(btn => {
+    btn.className = btn.dataset.v === v ? 'on' : '';
+  });
   render();
 }
 
-function updateStats() {
-  document.getElementById('wTotal').textContent = data.reduce((s,p) => s + (p.words||0), 0);
-  document.getElementById('pTotal').textContent = data.length;
+function openDetail() {
+  document.getElementById('app').classList.remove('detail-closed');
+  document.getElementById('detailPanel').classList.add('open'); // mobile
 }
 
+function closeDetail() {
+  document.getElementById('app').classList.add('detail-closed');
+  document.getElementById('detailPanel').classList.remove('open');
+  active = null;
+  render();
+}
+
+function toggleDetail() {
+  document.getElementById('detailPanel').classList.toggle('open');
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function updateStats() {
+  document.getElementById('wTotal').textContent = blocks.reduce((s, b) => s + (b.words||0), 0);
+  document.getElementById('pTotal').textContent = blocks.length;
+}
+
+// ─── Export ───
 function exportMd() {
-  let md = '# ' + (document.getElementById('title').textContent) + '\n\n';
-  let curSec = '';
-  data.forEach(p => {
-    if (p.section !== curSec) { curSec = p.section; md += `\n## ${curSec}\n\n`; }
-    md += (p.text||'') + '\n\n';
+  let md = '# Essay Composition\n\n', curSec = '';
+  blocks.forEach(b => {
+    if (b.section !== curSec) { curSec = b.section; md += `\n## ${curSec}\n\n`; }
+    md += (b.text || '') + '\n\n';
   });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([md], {type:'text/markdown'}));
   a.download = 'essay.md';
   a.click();
+}
+
+// ─── Init ───
+async function init() {
+  if (token) {
+    try {
+      // Test token validity
+      const r = await fetch(`${BR}/user/dashboard/`, { headers: { 'Authorization': `JWT ${token}` } });
+      if (r.ok) {
+        online = true;
+        document.getElementById('loginOverlay').classList.add('hidden');
+        setStatus('connected');
+        await loadBlocks();
+        return;
+      }
+    } catch(e) {}
+    // Token expired or failed — try refresh or show login
+    token = null;
+    localStorage.removeItem('br_token');
+  }
+  // Check if we have cached data
+  const cached = localStorage.getItem('composer_blocks');
+  if (cached) {
+    document.getElementById('loginOverlay').classList.add('hidden');
+    loadFromCache();
+  }
 }
 
 init();
