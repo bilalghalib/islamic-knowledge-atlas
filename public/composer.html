@@ -230,6 +230,14 @@ const F = {
   insights:7255, words:7257, fn:7258, comp:7259,
   sl:7261, assumes:7262, posture:7263, invitation:7264
 };
+// Insight fields (table 764)
+const IF = {
+  name:7193, content:7196, section:7197, fn:7198, source:7199,
+  scholar:7200, status:7202, argument:7203, wordCost:7205,
+  priority:7206, device:7207, claimType:7266, counter:7267,
+  defensibility:7268, risk:7269, verbatim:7270, verbatimSrc:7271,
+  sl:7272, sourceUrl:7284, dependsOn:7265
+};
 const OPTS = {
   section: {'Introduction':3337,'1. Modernity':3338,'2. Western Psychology':3339,'3. Integration':3340,'4. Comparative Judgement':3341,'Conclusion':3342},
   fn: {'Claim':3343,'Evidence':3344,'Reasoning':3345,'Counter':3346,'Illustration':3347,'Voice':3348,'Move':3349,'Structure':3350},
@@ -246,10 +254,11 @@ for (const [group, map] of Object.entries(OPTS)) {
 // ─── State ───
 let token = localStorage.getItem('br_token');
 let blocks = [];
+let insightCache = {}; // id → parsed insight
 let active = null;
 let view = 'essay';
 let online = false;
-let saveQueue = new Map(); // id → patch
+let saveQueue = new Map();
 let saveTimer = null;
 
 // ─── Auth ───
@@ -314,16 +323,41 @@ function parseRow(row) {
   };
 }
 
+async function loadInsights() {
+  try {
+    const d = await api('GET', `/database/rows/table/${T.insights}/`, null, { size: '200' });
+    if (!d) return;
+    insightCache = {};
+    d.results.forEach(row => {
+      const sel = (fid) => row[`field_${fid}`]?.value || '';
+      const txt = (fid) => row[`field_${fid}`] || '';
+      const multi = (fid) => (row[`field_${fid}`] || []).map(o => o.value || o);
+      insightCache[row.id] = {
+        id: row.id, name: txt(IF.name), content: txt(IF.content),
+        source: txt(IF.source), scholar: txt(IF.scholar),
+        fn: sel(IF.fn), status: sel(IF.status), argument: sel(IF.argument),
+        devices: multi(IF.device), claimType: sel(IF.claimType),
+        counter: txt(IF.counter), defensibility: sel(IF.defensibility),
+        risk: sel(IF.risk), verbatim: row[`field_${IF.verbatim}`] || false,
+        verbatimSrc: txt(IF.verbatimSrc), sl: sel(IF.sl),
+        sourceUrl: txt(IF.sourceUrl),
+        dependsOn: (row[`field_${IF.dependsOn}`] || []).map(r => r.id)
+      };
+    });
+    localStorage.setItem('composer_insights', JSON.stringify(insightCache));
+  } catch(e) { console.error('Insights load failed:', e); }
+}
+
 async function loadBlocks() {
   try {
-    // Load all blocks linked to composition 3, ordered by position
+    await loadInsights(); // load insights first
     const d = await api('GET', `/database/rows/table/${T.blocks}/`, null, {
       size: '200',
       order_by: `field_${F.pos}`,
       [`filter__field_${F.comp}__link_row_has`]: '3'
     });
     if (!d) return;
-    blocks = d.results.map(parseRow).filter(b => b.text); // skip empties
+    blocks = d.results.map(parseRow).filter(b => b.text);
     cacheBlocks();
     buildFilters();
     render();
@@ -342,6 +376,8 @@ function cacheBlocks() {
 
 function loadFromCache() {
   const cached = localStorage.getItem('composer_blocks');
+  const cachedIns = localStorage.getItem('composer_insights');
+  if (cachedIns) try { insightCache = JSON.parse(cachedIns); } catch(e) {}
   if (cached) {
     blocks = JSON.parse(cached);
     const ts = localStorage.getItem('composer_ts');
@@ -485,11 +521,20 @@ function renderJourney() {
   blocks.forEach((b, i) => {
     if (b.section !== curSec) { curSec = b.section; html += `<div class="sec-h">${curSec}</div>`; }
     const on = i === active ? ' on' : '';
+    // Count bilal verbatim insights linked to this block
+    const linkedIns = (b.insights || []).map(l => insightCache[l.id]).filter(Boolean);
+    const bilalCount = linkedIns.filter(ins => ins.verbatim).length;
+    const claimCount = linkedIns.filter(ins => ins.name && ins.name.startsWith('[CLAIM]')).length;
+    const hasCounter = linkedIns.some(ins => ins.counter);
     html += `<div class="jblock${on}" onclick="selectBlock(${i})">
       <div class="jleft">
         <span class="tag" data-fn="${b.fn}">${b.fn}</span>
         ${b.sl ? `<span class="tag" data-sl="${b.sl}">${b.sl}</span>` : '<span class="tag" style="background:#f9f9f9;color:#ccc">layer?</span>'}
         ${b.posture ? `<span class="tag" data-ps="${b.posture}">${b.posture}</span>` : '<span class="tag" style="background:#f9f9f9;color:#ccc">posture?</span>'}
+        <span style="font-size:.55rem;color:var(--dim)">${linkedIns.length} ins</span>
+        ${bilalCount ? `<span style="font-size:.55rem;color:var(--red)">● ${bilalCount} bilal</span>` : ''}
+        ${claimCount ? `<span style="font-size:.55rem;color:var(--blue)">${claimCount} claim</span>` : ''}
+        ${hasCounter ? `<span style="font-size:.55rem;color:var(--orange)">⚡ contested</span>` : ''}
       </div>
       <div class="jcenter">${b.text||''}</div>
       <div class="jright">
@@ -564,11 +609,28 @@ function renderDetail() {
   // Word count
   html += `<label>Words</label><div style="font-size:.85rem">${b.words}</div>`;
 
-  // Linked insights
+  // Linked insights — the rich part
   if (b.insights && b.insights.length) {
-    html += '<div class="linked"><h4>Linked Insights</h4>';
-    b.insights.forEach(ins => { html += `<div style="font-size:.7rem;margin:.1rem 0">• ${ins.value || ins.id}</div>`; });
-    html += '</div>';
+    html += `<label>Linked Insights (${b.insights.length})</label>`;
+    b.insights.forEach(link => {
+      const ins = insightCache[link.id];
+      if (!ins) { html += `<div class="linked"><div style="font-size:.7rem;color:var(--dim)">Insight #${link.id} (not loaded)</div></div>`; return; }
+      const isBilal = ins.verbatim;
+      const isClaim = ins.name.startsWith('[CLAIM]');
+      html += `<div class="linked" style="${isBilal ? 'border-left:3px solid var(--red);' : isClaim ? 'border-left:3px solid var(--blue);' : ''}">`;
+      html += `<h4 style="font-size:.72rem;${isBilal ? 'color:var(--red)' : isClaim ? 'color:var(--blue)' : ''}">${isBilal ? '● ' : ''}${ins.name}</h4>`;
+      if (ins.content) html += `<div style="font-size:.72rem;margin:.2rem 0;color:#444">${ins.content.substring(0, 200)}${ins.content.length > 200 ? '...' : ''}</div>`;
+      if (ins.source) html += `<div style="font-size:.65rem;color:var(--dim)">Source: ${ins.source}</div>`;
+      if (ins.sourceUrl) html += `<div style="font-size:.65rem"><a href="${ins.sourceUrl}" target="_blank" style="color:var(--accent)">→ ${ins.sourceUrl.substring(0, 40)}...</a></div>`;
+      if (ins.scholar) html += `<div style="font-size:.65rem;color:var(--dim)">Scholar: ${ins.scholar}</div>`;
+      if (ins.devices && ins.devices.length) html += `<div style="font-size:.65rem;color:var(--dim)">Devices: ${ins.devices.join(', ')}</div>`;
+      if (ins.verbatimSrc) html += `<div style="font-size:.65rem;color:var(--red)">● ${ins.verbatimSrc}</div>`;
+      if (ins.counter) html += `<div style="font-size:.68rem;margin-top:.2rem;padding:.2rem .3rem;background:#fef2f2;border-radius:3px"><strong style="font-size:.6rem;color:var(--red)">COUNTERARG:</strong> ${ins.counter.substring(0, 150)}</div>`;
+      if (ins.defensibility || ins.risk) html += `<div style="font-size:.62rem;color:var(--dim);margin-top:.1rem">${ins.defensibility ? 'Defensibility: '+ins.defensibility : ''} ${ins.risk ? '| Risk: '+ins.risk : ''}</div>`;
+      html += '</div>';
+    });
+  } else {
+    html += '<label>Linked Insights</label><div style="font-size:.75rem;color:var(--dim);margin-top:.2rem">No insights linked. Link them in Baserow (table 764 → Source Blocks field).</div>';
   }
 
   // Source info (from JSON fallback)
