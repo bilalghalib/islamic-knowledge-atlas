@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Essay Composer</title>
+<!-- SortableJS for drag reorder -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<style>
+:root{--bg:#faf9f6;--t:#1a1a1a;--m:#888;--a:#2d5a27;--a2:#8b4513;--b:#e0e0e0;--r:#dc2626;--radius:4px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Georgia,serif;background:var(--bg);color:var(--t);line-height:1.6;font-size:15px}
+
+/* Layout */
+.app{display:flex;height:100vh}
+.sidebar{width:280px;background:#fff;border-right:1px solid var(--b);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-head{padding:.6rem .8rem;border-bottom:1px solid var(--b)}
+.sidebar-head h1{font-size:1.1rem;margin-bottom:.2rem}
+.sidebar-body{flex:1;overflow-y:auto;padding:.3rem}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.toolbar{display:flex;align-items:center;gap:.8rem;padding:.4rem 1rem;background:#fff;border-bottom:1px solid var(--b);font-size:.78rem;flex-shrink:0}
+.toolbar .st{font-weight:bold;color:var(--a)}
+.essay-scroll{flex:1;overflow-y:auto;padding:1.5rem 2.5rem 3rem}
+
+/* View toggle */
+.view-tabs{display:flex;gap:0;margin-left:auto}
+.view-tabs button{padding:.25rem .6rem;border:1px solid var(--b);background:#fff;cursor:pointer;font-family:inherit;font-size:.72rem;color:var(--m)}
+.view-tabs button:first-child{border-radius:var(--radius) 0 0 var(--radius)}
+.view-tabs button:last-child{border-radius:0 var(--radius) var(--radius) 0}
+.view-tabs button.on{background:var(--a);color:#fff;border-color:var(--a)}
+
+/* Sidebar items */
+.sblock{padding:.35rem .5rem;margin:.15rem .3rem;border:1px solid var(--b);border-radius:var(--radius);cursor:grab;font-size:.75rem;transition:background .1s;display:flex;align-items:center;gap:.3rem}
+.sblock:hover{background:#f5f5f0}
+.sblock.active{background:#d1fae5;border-color:var(--a)}
+.sblock .grip{color:var(--b);cursor:grab;font-size:.9rem;user-select:none}
+.sblock .num{color:var(--a);font-weight:bold;font-size:.65rem;min-width:18px}
+.sblock .fn-tag{padding:.02rem .2rem;border-radius:4px;font-size:.58rem;white-space:nowrap}
+.sblock .words{color:var(--m);font-size:.62rem;margin-left:auto;white-space:nowrap}
+.sblock .preview-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.7rem;color:#555}
+.sortable-ghost{opacity:.3}
+.sortable-chosen{background:#fef3c7!important}
+
+/* Function tag colors */
+[data-fn="Claim"]{background:#dbeafe;color:#1e40af}
+[data-fn="Evidence"]{background:#d1fae5;color:#065f46}
+[data-fn="Reasoning"]{background:#fef3c7;color:#92400e}
+[data-fn="Voice"]{background:#fde68a;color:#78350f}
+[data-fn="Move"]{background:#fee2e2;color:#991b1b}
+[data-fn="Structure"]{background:#f3f4f6;color:#555}
+[data-fn="Counter"]{background:#fce7f3;color:#9d174d}
+[data-fn="Illustration"]{background:#e0f2fe;color:#0369a1}
+
+/* Essay paragraphs */
+.section-heading{font-size:1.05rem;color:var(--a2);margin:1.5rem 0 .3rem;border-bottom:1px solid var(--b);padding-bottom:.2rem}
+.para-block{padding:.5rem .7rem;margin:.2rem 0;border-left:3px solid transparent;border-radius:0 var(--radius) var(--radius) 0;cursor:pointer;position:relative;transition:all .1s}
+.para-block:hover{background:#fafaf5;border-left-color:var(--b)}
+.para-block.active{background:#f0fdf4;border-left-color:var(--a)}
+.para-block.is-insert{border-left-style:dashed;border-left-color:var(--r)}
+.para-block .para-meta{position:absolute;right:.5rem;top:.3rem;display:flex;gap:.3rem;align-items:center}
+.para-block .para-meta .fn-tag{font-size:.58rem;padding:.02rem .25rem;border-radius:4px}
+.para-block .para-meta .wcount{font-size:.62rem;color:var(--m)}
+.para-block .bilal-marker{position:absolute;left:-8px;top:50%;transform:translateY(-50%);width:6px;height:6px;background:var(--r);border-radius:50%}
+.para-text{font-size:.88rem;padding-right:100px;outline:none;min-height:1.5em}
+.para-text:focus{background:#fffbeb}
+.para-block .para-actions{display:none;position:absolute;right:.5rem;bottom:.3rem;gap:.2rem}
+.para-block:hover .para-actions{display:flex}
+.para-actions button{font-size:.6rem;padding:.1rem .3rem;border:1px solid var(--b);border-radius:2px;background:#fff;cursor:pointer;color:var(--m)}
+.para-actions button:hover{border-color:var(--r);color:var(--r)}
+
+/* Table view */
+.table-view{width:100%;border-collapse:collapse;font-size:.78rem}
+.table-view th{background:var(--a);color:#fff;padding:.3rem .4rem;text-align:left;font-weight:normal;position:sticky;top:0}
+.table-view td{padding:.3rem .4rem;border-bottom:1px solid var(--b);max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.table-view tr:hover{background:#f5f5f0}
+.table-view tr.active{background:#d1fae5}
+
+/* Add button */
+.add-btn{width:100%;padding:.3rem;border:1px dashed var(--b);border-radius:var(--radius);background:transparent;cursor:pointer;font-family:inherit;font-size:.75rem;color:var(--m);margin:.3rem 0}
+.add-btn:hover{border-color:var(--a);color:var(--a)}
+
+/* Filters */
+.filters{display:flex;gap:.3rem;padding:.3rem .8rem;flex-wrap:wrap}
+.filters select{font-family:inherit;font-size:.7rem;padding:.15rem .3rem;border:1px solid var(--b);border-radius:var(--radius)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+<div class="sidebar-head">
+  <h1 id="title">Essay Composer</h1>
+  <div class="filters">
+    <select id="fSec"><option value="">All sections</option></select>
+    <select id="fFn"><option value="">All functions</option></select>
+  </div>
+</div>
+<div class="sidebar-body" id="sidebarList"></div>
+<button class="add-btn" onclick="addParagraph()">+ Add paragraph</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+<div class="toolbar">
+  <span>Words: <span class="st" id="wTotal">0</span>/4000</span>
+  <span>¶ <span class="st" id="pTotal">0</span></span>
+  <div class="view-tabs">
+    <button class="on" onclick="setView('essay')" id="vEssay">Essay</button>
+    <button onclick="setView('table')" id="vTable">Table</button>
+  </div>
+  <button onclick="exportMd()" style="font-size:.68rem;padding:.15rem .4rem;border:1px solid var(--b);border-radius:var(--radius);background:#fff;cursor:pointer;margin-left:.3rem">↓ .md</button>
+</div>
+<div class="essay-scroll" id="mainView"></div>
+</div>
+
+</div>
+
+<script>
+let data = [];
+let active = null;
+let view = 'essay';
+
+async function init() {
+  const r = await fetch('data/essay_composition.json');
+  const d = await r.json();
+  data = [];
+  let pos = 1;
+  d.sections.forEach(sec => {
+    sec.paragraphs.forEach(p => {
+      data.push({...p, section: sec.name, pos: pos++});
+    });
+  });
+  buildFilters();
+  render();
+  initDrag();
+}
+
+function buildFilters() {
+  const secs = [...new Set(data.map(p=>p.section))];
+  const fns = [...new Set(data.map(p=>p.function))];
+  const fSec = document.getElementById('fSec');
+  const fFn = document.getElementById('fFn');
+  secs.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;fSec.appendChild(o)});
+  fns.forEach(f=>{const o=document.createElement('option');o.value=f;o.textContent=f;fFn.appendChild(o)});
+  fSec.onchange = render;
+  fFn.onchange = render;
+}
+
+function render() {
+  renderSidebar();
+  if (view === 'essay') renderEssay();
+  else renderTable();
+  updateStats();
+}
+
+function renderSidebar() {
+  const list = document.getElementById('sidebarList');
+  const sf = document.getElementById('fSec').value;
+  const ff = document.getElementById('fFn').value;
+  list.innerHTML = '';
+  data.forEach((p, i) => {
+    if (sf && p.section !== sf) return;
+    if (ff && p.function !== ff) return;
+    const div = document.createElement('div');
+    div.className = 'sblock' + (i === active ? ' active' : '');
+    div.dataset.idx = i;
+    div.innerHTML = `
+      <span class="grip">⠿</span>
+      <span class="num">${p.pos}</span>
+      <span class="fn-tag" data-fn="${p.function}">${p.function}</span>
+      <span class="preview-text">${(p.text||'').substring(0,40)}</span>
+      <span class="words">${p.words||0}w</span>
+    `;
+    div.onclick = () => { active = i; render(); };
+    list.appendChild(div);
+  });
+}
+
+function renderEssay() {
+  const el = document.getElementById('mainView');
+  let html = '';
+  let curSec = '';
+  let cum = 0;
+  data.forEach((p, i) => {
+    if (p.section !== curSec) {
+      curSec = p.section;
+      html += `<div class="section-heading">${curSec}</div>`;
+    }
+    cum += (p.words||0);
+    let cls = 'para-block';
+    if (i === active) cls += ' active';
+    if (p.is_insert) cls += ' is-insert';
+    html += `<div class="${cls}" data-idx="${i}" onclick="select(${i})">
+      ${p.bilal_verbatim ? '<span class="bilal-marker"></span>' : ''}
+      <div class="para-meta">
+        <span class="fn-tag" data-fn="${p.function}">${p.function}</span>
+        <span class="wcount">${p.words||0}w (${cum})</span>
+      </div>
+      <div class="para-text" contenteditable="true" data-idx="${i}" onblur="editText(${i}, this)">${p.text||''}</div>
+      <div class="para-actions">
+        <button onclick="event.stopPropagation();deletePara(${i})">✕ delete</button>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+function renderTable() {
+  const el = document.getElementById('mainView');
+  let html = '<table class="table-view"><thead><tr>';
+  html += '<th>#</th><th>Section</th><th>Function</th><th>Words</th><th>Text</th><th>Source</th><th>Devices</th><th>Insert?</th><th>Bilal?</th>';
+  html += '</tr></thead><tbody>';
+  data.forEach((p, i) => {
+    html += `<tr class="${i===active?'active':''}" onclick="select(${i})">
+      <td>${p.pos}</td>
+      <td>${p.section||''}</td>
+      <td><span class="fn-tag" data-fn="${p.function}">${p.function}</span></td>
+      <td>${p.words||0}</td>
+      <td title="${(p.text||'').replace(/"/g,'&quot;')}">${(p.text||'').substring(0,80)}...</td>
+      <td>${p.source||''}</td>
+      <td>${(p.devices||[]).join(', ')}</td>
+      <td>${p.is_insert?'★':''}</td>
+      <td>${p.bilal_verbatim?'●':''}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+
+function select(i) { active = i; render(); }
+
+function editText(i, el) {
+  const t = el.textContent.trim();
+  if (t !== data[i].text) {
+    data[i].text = t;
+    data[i].words = t.split(/\s+/).filter(w=>w).length;
+    renderSidebar();
+    updateStats();
+  }
+}
+
+function deletePara(i) {
+  if (!confirm('Delete this paragraph?')) return;
+  data.splice(i, 1);
+  reindex();
+  if (active >= data.length) active = data.length - 1;
+  render();
+}
+
+function addParagraph() {
+  const sec = data.length > 0 ? data[data.length-1].section : 'Introduction';
+  data.push({
+    text: 'New paragraph...', section: sec, function: 'Reasoning',
+    words: 2, pos: data.length + 1, source: '', devices: [],
+    is_insert: true, bilal_verbatim: false
+  });
+  active = data.length - 1;
+  render();
+  // Scroll to bottom
+  document.getElementById('mainView').scrollTop = 99999;
+}
+
+function reindex() {
+  data.forEach((p, i) => p.pos = i + 1);
+}
+
+function initDrag() {
+  const list = document.getElementById('sidebarList');
+  Sortable.create(list, {
+    animation: 150,
+    handle: '.grip',
+    ghostClass: 'sortable-ghost',
+    chosenClass: 'sortable-chosen',
+    onEnd: function(evt) {
+      // Get filtered indices
+      const items = list.querySelectorAll('.sblock');
+      const newOrder = [...items].map(el => parseInt(el.dataset.idx));
+
+      // Rebuild data in new order
+      const sf = document.getElementById('fSec').value;
+      const ff = document.getElementById('fFn').value;
+
+      if (!sf && !ff) {
+        // No filter: simple reorder
+        const reordered = newOrder.map(i => data[i]);
+        data.length = 0;
+        reordered.forEach(p => data.push(p));
+      }
+      reindex();
+      render();
+    }
+  });
+}
+
+function setView(v) {
+  view = v;
+  document.getElementById('vEssay').className = v==='essay' ? 'on' : '';
+  document.getElementById('vTable').className = v==='table' ? 'on' : '';
+  render();
+}
+
+function updateStats() {
+  document.getElementById('wTotal').textContent = data.reduce((s,p) => s + (p.words||0), 0);
+  document.getElementById('pTotal').textContent = data.length;
+}
+
+function exportMd() {
+  let md = '# ' + (document.getElementById('title').textContent) + '\n\n';
+  let curSec = '';
+  data.forEach(p => {
+    if (p.section !== curSec) { curSec = p.section; md += `\n## ${curSec}\n\n`; }
+    md += (p.text||'') + '\n\n';
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([md], {type:'text/markdown'}));
+  a.download = 'essay.md';
+  a.click();
+}
+
+init();
+</script>
+</body>
+</html>
